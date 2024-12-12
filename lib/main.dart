@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:infomaniak_email_admin_app/provider/api_key.dart';
 import 'package:infomaniak_email_admin_app/screens/home.dart';
-import 'package:infomaniak_email_admin_app/screens/how_to_start.dart';
 
 final colorScheme = ColorScheme.fromSeed(
   brightness: Brightness.dark,
@@ -40,9 +40,22 @@ final theme = ThemeData().copyWith(
       color: colorScheme.onSurface,
     ),
   ),
+  dialogTheme: const DialogTheme(
+    backgroundColor: Colors.white,
+    contentTextStyle: TextStyle(
+      color: Colors.black,
+    ),
+  ),
+  textButtonTheme: const TextButtonThemeData(
+    style: ButtonStyle(
+      foregroundColor: WidgetStatePropertyAll<Color>(Colors.black),
+    ),
+  ),
 );
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await apiKeyProvider.init();
   runApp(
     const ProviderScope(
       child: MyApp(),

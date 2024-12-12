@@ -1,67 +1,75 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:infomaniak_email_admin_app/provider/api_key.dart';
 import 'package:infomaniak_email_admin_app/screens/how_to_start.dart';
 import 'package:infomaniak_email_admin_app/screens/settings.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<StatefulWidget> createState() {
+  State<HomeScreen> createState() {
     return _HomeScreenState();
   }
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late Future<String?> _apiKey;
+  String? _apiKey;
 
-  @override
-  void initState() {
-    super.initState();
-    _apiKey = _loadAPIKey();
-  }
+  Widget getBody() {
+    if (_apiKey == null) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text('Please setup an API key to start'),
+            TextButton(
+              onPressed: () async {
+                await Navigator.of(context).push(
+                    MaterialPageRoute(builder: (ctx) => HowToStartScreen()));
+                setState(() {
+                  _apiKey = apiKeyProvider.getKey();
+                });
+              },
+              child: Text('Go to API key setting'),
+            ),
+          ],
+        ),
+      );
+    }
 
-  Future<String?> _loadAPIKey() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('API_KEY');
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text("Setting done"),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _apiKey,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        if (snapshot.data == null) {
-          print('API_KEY is null');
-          return Scaffold(
-            body: HowToStartScreen(),
-          );
-        }
-
-        print('API_KEY is NOT null');
-        return Scaffold(
-          appBar: AppBar(
-            title: Text('Infomaniak mail admin tool'),
-            actions: [
-              IconButton(
-                onPressed: () {
-                  setState(() {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (ctx) => SettingsScreen()),
-                    );
-                  });
-                },
-                icon: Icon(Icons.settings),
-              ),
-            ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Infomaniak mail admin tool'),
+        actions: [
+          IconButton(
+            onPressed: () async {
+              await Navigator.of(context).push(
+                MaterialPageRoute(builder: (ctx) => SettingsScreen()),
+              );
+            },
+            icon: Icon(Icons.settings),
           ),
-        );
-      },
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(8),
+        child: getBody(),
+      ),
     );
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:infomaniak_email_admin_app/provider/api_key.dart';
 
 class HowToStartScreen extends StatefulWidget {
   const HowToStartScreen({
@@ -8,7 +8,7 @@ class HowToStartScreen extends StatefulWidget {
   });
 
   @override
-  State<StatefulWidget> createState() {
+  State<HowToStartScreen> createState() {
     return _HowToStartScreenState();
   }
 }
@@ -20,9 +20,9 @@ class _HowToStartScreenState extends State<HowToStartScreen> {
   void _saveAPIKey() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
       setState(() {
-        prefs.setString('API_KEY', _enteredAPIKey);
+        apiKeyProvider.changeKey(_enteredAPIKey);
+        Navigator.of(context).pop();
       });
     }
   }
@@ -107,6 +107,16 @@ class _HowToStartScreenState extends State<HowToStartScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  ElevatedButton.icon(
+                    icon: const Icon(Icons.arrow_back),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    label: const Text('Cancel'),
+                  ),
+                  const SizedBox(
+                    width: 8,
+                  ),
                   ElevatedButton.icon(
                     icon: const Icon(Icons.add),
                     onPressed: _saveAPIKey,
