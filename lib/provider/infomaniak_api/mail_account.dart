@@ -5,10 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:infomaniak_email_admin_app/constants/links.dart';
 import 'package:infomaniak_email_admin_app/models/infomaniak/account.dart';
 import 'package:http/http.dart' as http;
+import 'package:infomaniak_email_admin_app/models/infomaniak/mail_account.dart';
 import 'package:infomaniak_email_admin_app/provider/api_key.dart';
 
 class MailAccountApi {
-  List<AccountModel> accounts = [];
+  List<MailAccountModel> accounts = [];
   String version = "1";
   String endpointName = "mail_hostings";
   String endpointSubName = "mailboxes";
@@ -20,10 +21,10 @@ class MailAccountApi {
     return headers;
   }
 
-  Future<List<AccountModel>> fetchAccountList(
-      BuildContext context, int mailAccountId) async {
+  Future<List<MailAccountModel>> fetchAccountList(
+      BuildContext context, int mailHostingId) async {
     String endpoint =
-        "$infomaniakApiBaseUrl/$version/$endpointName/$mailAccountId";
+        "$infomaniakApiBaseUrl/$version/$endpointName/$mailHostingId/$endpointSubName";
 
     try {
       http.Response apiResponse = await http.get(
@@ -35,7 +36,7 @@ class MailAccountApi {
       if (apiResponse.statusCode == 200 && response['result'] == "success") {
         accounts.removeRange(0, accounts.length);
         for (var account in response['data']) {
-          accounts.add(AccountModel.fromJson(account));
+          accounts.add(MailAccountModel.fromJson(account));
         }
       } else {
         if (response.containsKey('error')) {

@@ -1,4 +1,4 @@
-class MailAccount {
+class MailAccountModel {
   String? mailboxName;
   String? mailbox;
   String? mailboxIdn;
@@ -6,7 +6,7 @@ class MailAccount {
   bool isFreeMail = false;
   String? fullName;
 
-  MailAccount.fromJson(Map<String, dynamic> json) {
+  MailAccountModel.fromJson(Map<String, dynamic> json) {
     mailboxName = json['mailbox_name'];
     mailbox = json['mailbox'];
     mailboxIdn = json['mailbox_idn'];

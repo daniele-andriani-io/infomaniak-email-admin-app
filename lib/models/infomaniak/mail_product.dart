@@ -1,4 +1,4 @@
-class MailProduct {
+class MailProductModel {
   int? id;
   int? accountId;
   int? serviceId;
@@ -7,7 +7,7 @@ class MailProduct {
   String? internalName;
   String? description;
 
-  MailProduct.fromJson(Map<String, dynamic> json) {
+  MailProductModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     accountId = json['account_id'];
     serviceId = json['service_id'];

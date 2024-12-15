@@ -8,7 +8,7 @@ import 'package:infomaniak_email_admin_app/models/infomaniak/mail_product.dart';
 import 'package:infomaniak_email_admin_app/provider/api_key.dart';
 
 class MailProductApi {
-  List<MailProduct> products = [];
+  List<MailProductModel> products = [];
   String version = "1";
   String endpointName = "mail_hostings";
 
@@ -19,7 +19,7 @@ class MailProductApi {
     return headers;
   }
 
-  Future<List<MailProduct>> fetchProductList(
+  Future<List<MailProductModel>> fetchProductList(
       BuildContext context, int mailAccountId) async {
     String endpoint =
         "$infomaniakApiBaseUrl/$version/$endpointName?account_id=$mailAccountId";
@@ -34,7 +34,7 @@ class MailProductApi {
       if (apiResponse.statusCode == 200 && response['result'] == "success") {
         products.removeRange(0, products.length);
         for (var account in response['data']) {
-          products.add(MailProduct.fromJson(account));
+          products.add(MailProductModel.fromJson(account));
         }
       } else {
         if (response.containsKey('error')) {

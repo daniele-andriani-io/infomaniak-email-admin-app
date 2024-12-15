@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:infomaniak_email_admin_app/models/infomaniak/account.dart';
+import 'package:infomaniak_email_admin_app/models/infomaniak/mail_account.dart';
 import 'package:infomaniak_email_admin_app/models/infomaniak/mail_product.dart';
+import 'package:infomaniak_email_admin_app/provider/infomaniak_api/mail_account.dart';
 import 'package:infomaniak_email_admin_app/provider/infomaniak_api/mail_product.dart';
-import 'package:infomaniak_email_admin_app/screens/mail_accounts.dart';
 import 'package:infomaniak_email_admin_app/screens/settings.dart';
 
-class MailProductsScreen extends StatefulWidget {
+class MailAccountsScreen extends StatefulWidget {
   final int accountId;
-  const MailProductsScreen({super.key, required this.accountId});
+  const MailAccountsScreen({super.key, required this.accountId});
 
   @override
-  State<MailProductsScreen> createState() {
-    return _MailProductsScreensState();
+  State<MailAccountsScreen> createState() {
+    return _MailAccountsScreensState();
   }
 }
 
-class _MailProductsScreensState extends State<MailProductsScreen> {
-  MailProductApi mailProductApi = MailProductApi();
-  List<MailProductModel> mailProducts = [];
+class _MailAccountsScreensState extends State<MailAccountsScreen> {
+  MailAccountApi mailAccountApi = MailAccountApi();
+  List<MailAccountModel> mailAccounts = [];
 
   @override
   void initState() {
@@ -25,13 +27,13 @@ class _MailProductsScreensState extends State<MailProductsScreen> {
   }
 
   void _initMailAccounts() async {
-    mailProducts =
-        await mailProductApi.fetchProductList(context, widget.accountId);
+    mailAccounts =
+        await mailAccountApi.fetchAccountList(context, widget.accountId);
     setState(() {});
   }
 
   Widget getBody() {
-    if (mailProducts.isEmpty) {
+    if (mailAccounts.isEmpty) {
       return Center(
         child: Column(
           mainAxisSize: MainAxisSize.max,
@@ -43,34 +45,30 @@ class _MailProductsScreensState extends State<MailProductsScreen> {
       );
     }
 
-    if (mailProducts.isNotEmpty) {
+    if (mailAccounts.isNotEmpty) {
       return RefreshIndicator(
           child: ListView(
             children: [
               Container(
                 height: 40,
                 child: const Center(
-                  child: Text('Mail products'),
+                  child: Text('Mail accounts'),
                 ),
               ),
               ListView.builder(
                 physics: ScrollPhysics(),
                 shrinkWrap: true,
-                itemCount: mailProducts.length,
+                itemCount: mailAccounts.length,
                 itemBuilder: (context, index) => ListTile(
                   leading: Icon(Icons.email),
-                  onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (ctx) => MailAccountsScreen(
-                            accountId: mailProducts[index].id!)));
-                  },
-                  title: Text(mailProducts[index].customerName!),
+                  onTap: () {},
+                  title: Text(mailAccounts[index].mailbox!),
                 ),
               ),
             ],
           ),
           onRefresh: () async {
-            await mailProductApi.fetchProductList(context, widget.accountId);
+            await mailAccountApi.fetchAccountList(context, widget.accountId);
           });
     }
     return SizedBox(
