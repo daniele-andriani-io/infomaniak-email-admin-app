@@ -4,6 +4,7 @@ import 'package:infomaniak_email_admin_app/models/infomaniak/mail_account.dart';
 import 'package:infomaniak_email_admin_app/models/infomaniak/mail_product.dart';
 import 'package:infomaniak_email_admin_app/provider/infomaniak_api/mail_account.dart';
 import 'package:infomaniak_email_admin_app/provider/infomaniak_api/mail_product.dart';
+import 'package:infomaniak_email_admin_app/screens/mail_aliases.dart';
 import 'package:infomaniak_email_admin_app/screens/settings.dart';
 
 class MailAccountsScreen extends StatefulWidget {
@@ -61,7 +62,13 @@ class _MailAccountsScreensState extends State<MailAccountsScreen> {
                 itemCount: mailAccounts.length,
                 itemBuilder: (context, index) => ListTile(
                   leading: Icon(Icons.email),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (ctx) => MailAliasesScreen(
+                              mailHostingId: widget.accountId,
+                              mailboxName: mailAccounts[index].mailboxName!,
+                            )));
+                  },
                   title: Text(mailAccounts[index].mailbox!),
                 ),
               ),

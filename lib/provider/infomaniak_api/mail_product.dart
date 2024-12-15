@@ -19,10 +19,9 @@ class MailProductApi {
     return headers;
   }
 
-  Future<List<MailProductModel>> fetchProductList(
-      BuildContext context, int mailAccountId) async {
+  Future<List<MailProductModel>> fetchProductList(BuildContext context) async {
     String endpoint =
-        "$infomaniakApiBaseUrl/$version/$endpointName?account_id=$mailAccountId";
+        "$infomaniakApiBaseUrl/$version/$endpointName?order_by=customer_name";
 
     try {
       http.Response apiResponse = await http.get(

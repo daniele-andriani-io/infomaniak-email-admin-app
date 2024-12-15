@@ -24,7 +24,7 @@ class MailAccountApi {
   Future<List<MailAccountModel>> fetchAccountList(
       BuildContext context, int mailHostingId) async {
     String endpoint =
-        "$infomaniakApiBaseUrl/$version/$endpointName/$mailHostingId/$endpointSubName";
+        "$infomaniakApiBaseUrl/$version/$endpointName/$mailHostingId/$endpointSubName?order_by=mailbox";
 
     try {
       http.Response apiResponse = await http.get(

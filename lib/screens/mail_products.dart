@@ -25,8 +25,7 @@ class _MailProductsScreensState extends State<MailProductsScreen> {
   }
 
   void _initMailAccounts() async {
-    mailProducts =
-        await mailProductApi.fetchProductList(context, widget.accountId);
+    mailProducts = await mailProductApi.fetchProductList(context);
     setState(() {});
   }
 
@@ -70,7 +69,7 @@ class _MailProductsScreensState extends State<MailProductsScreen> {
             ],
           ),
           onRefresh: () async {
-            await mailProductApi.fetchProductList(context, widget.accountId);
+            await mailProductApi.fetchProductList(context);
           });
     }
     return SizedBox(
