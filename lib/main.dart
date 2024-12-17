@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:infomaniak_email_admin_app/provider/api_key.dart';
 import 'package:infomaniak_email_admin_app/screens/home.dart';
 
@@ -55,6 +56,7 @@ final theme = ThemeData().copyWith(
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
   await apiKeyProvider.init();
   runApp(
     const ProviderScope(
