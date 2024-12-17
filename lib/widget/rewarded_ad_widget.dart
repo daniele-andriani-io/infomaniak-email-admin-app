@@ -95,7 +95,7 @@ class _RewardedAdWidgetState extends State<RewardedAdWidget> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: const Text('Help me pay my bills by watching an ad'),
+      title: const Text('Help me pay my bills by watching ads'),
       trailing: IconButton(
         onPressed: () {
           loadAd();
