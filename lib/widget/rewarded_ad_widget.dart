@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:infomaniak_email_admin_app/provider/ads_watched.dart';
 
 class RewardedAdWidget extends StatefulWidget {
   const RewardedAdWidget({super.key});
@@ -15,6 +16,12 @@ class RewardedAdWidget extends StatefulWidget {
 
 class _RewardedAdWidgetState extends State<RewardedAdWidget> {
   RewardedAd? _rewardedAd;
+
+  @override
+  void initState() {
+    loadAd();
+    super.initState();
+  }
 
   // TODO: replace this test ad unit with your own ad unit.
   final adUnitId = Platform.isAndroid
@@ -36,12 +43,24 @@ class _RewardedAdWidgetState extends State<RewardedAdWidget> {
               onAdImpression: (ad) {},
               // Called when the ad failed to show full screen content.
               onAdFailedToShowFullScreenContent: (ad, err) {
-                // Dispose the ad here to free resources.
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.heart_broken),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        Text("Oh no, something went wrong! Please try again"),
+                      ],
+                    ),
+                  ),
+                );
                 ad.dispose();
               },
               // Called when the ad dismissed full screen content.
               onAdDismissedFullScreenContent: (ad) {
-                // Dispose the ad here to free resources.
                 ad.dispose();
               },
               // Called when a click is recorded for an ad.
@@ -53,6 +72,20 @@ class _RewardedAdWidgetState extends State<RewardedAdWidget> {
         },
         // Called when an ad request failed.
         onAdFailedToLoad: (LoadAdError error) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.heart_broken),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  Text("Oh no, something went wrong! Please try again"),
+                ],
+              ),
+            ),
+          );
           debugPrint('RewardedAd failed to load: $error');
         },
       ),
@@ -68,12 +101,13 @@ class _RewardedAdWidgetState extends State<RewardedAdWidget> {
           loadAd();
           setState(() {
             _rewardedAd!.show(onUserEarnedReward: (adWithoutView, rewardItem) {
+              adsWatchedProvider.incrementNumberOfAdsWatched();
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
+                SnackBar(
                   content: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('Thank you for your support!'),
+                      Text(adsWatchedProvider.getThanksPhrase()),
                       SizedBox(
                         width: 8,
                       ),

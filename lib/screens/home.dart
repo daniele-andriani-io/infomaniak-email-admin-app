@@ -34,22 +34,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget getBody() {
     if (_apiKey == null || accounts.isEmpty) {
-      return Center(
+      return const Center(
         child: Column(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('Please setup an API key to start'),
-            TextButton(
-              onPressed: () async {
-                await Navigator.of(context).push(
-                    MaterialPageRoute(builder: (ctx) => HowToStartScreen()));
-                setState(() {
-                  _apiKey = apiKeyProvider.getKey();
-                });
-              },
-              child: Text('Go to API key setting'),
-            ),
+            Text('Please setup an API key to start'),
+            Text('To do so, please go to the settings menu in the top right'),
           ],
         ),
       );
