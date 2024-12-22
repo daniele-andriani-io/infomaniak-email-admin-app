@@ -5,7 +5,16 @@
   "start_APIconfig": "To do so, please go to the settings menu in the top right",
   "mail_products": "Mail products",
   "mail_accounts": "Mail accounts",
-  "mail_aliases": "Mail aliases",
+  "mail_aliases": "Aliases of {mailAccount}",
+  "@mail_aliases": {
+    "description": "Email address",
+    "placeholders": {
+      "mailAccount": {
+        "type": "String",
+        "example": "test@test.ch"
+      }
+    }
+  },
   "settings": "Settings",
   "settings_add_API_key": "Add API key",
   "settings_save_API_key": "Save API key",

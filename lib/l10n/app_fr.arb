@@ -4,8 +4,17 @@
   "start_APIinfo": "Veuillez introduire votre clé API pour démarrer",
   "start_APIconfig": "Pour ainsi faire vous devez vous rendre dans la configuration de l'application en haut à droite",
   "mail_products": "Produits mail",
-  "mail_accounts": "Comptes mail",
-  "mail_aliases": "Aliases de mail",
+  "mail_accounts": "Adresses mail",
+  "mail_aliases": "Aliases de {mailAccount}",
+  "@mail_aliases": {
+    "description": "Adresse email",
+    "placeholders": {
+      "aliasName": {
+        "type": "String",
+        "example": "test@test.ch"
+      }
+    }
+  },
   "settings": "Configuration",
   "settings_add_API_key": "Ajouter une clé API",
   "settings_save_API_key": "Enregistrer",

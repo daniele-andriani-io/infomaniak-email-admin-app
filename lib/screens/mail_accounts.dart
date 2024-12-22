@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:infomaniak_email_admin_app/models/infomaniak/mail_account.dart';
 import 'package:infomaniak_email_admin_app/provider/infomaniak_api/mail_account.dart';
 import 'package:infomaniak_email_admin_app/screens/mail_aliases.dart';
-import 'package:infomaniak_email_admin_app/screens/settings.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MailAccountsScreen extends StatefulWidget {
@@ -55,11 +54,14 @@ class _MailAccountsScreensState extends State<MailAccountsScreen> {
                 itemBuilder: (context, index) => ListTile(
                   leading: const Icon(Icons.email),
                   onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
                         builder: (ctx) => MailAliasesScreen(
-                              mailHostingId: widget.accountId,
-                              mailboxName: mailAccounts[index].mailboxName!,
-                            )));
+                          mailHostingId: widget.accountId,
+                          mailAccount: mailAccounts[index],
+                        ),
+                      ),
+                    );
                   },
                   title: Text(mailAccounts[index].mailbox!),
                 ),
@@ -80,16 +82,6 @@ class _MailAccountsScreensState extends State<MailAccountsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.mail_accounts!),
-        actions: [
-          IconButton(
-            onPressed: () async {
-              await Navigator.of(context).push(
-                MaterialPageRoute(builder: (ctx) => const SettingsScreen()),
-              );
-            },
-            icon: const Icon(Icons.settings),
-          ),
-        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(8),

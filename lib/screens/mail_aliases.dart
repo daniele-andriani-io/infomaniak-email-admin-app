@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:infomaniak_email_admin_app/models/infomaniak/mail_account.dart';
 import 'package:infomaniak_email_admin_app/provider/infomaniak_api/mail_alias.dart';
 import 'package:infomaniak_email_admin_app/screens/add_mail_aliases.dart';
-import 'package:infomaniak_email_admin_app/screens/settings.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MailAliasesScreen extends StatefulWidget {
   final int mailHostingId;
-  final String mailboxName;
+  final MailAccountModel mailAccount;
   const MailAliasesScreen(
-      {super.key, required this.mailHostingId, required this.mailboxName});
+      {super.key, required this.mailHostingId, required this.mailAccount});
 
   @override
   State<MailAliasesScreen> createState() {
@@ -28,11 +28,14 @@ class _MailAliasesScreensState extends State<MailAliasesScreen> {
 
   void _initMailAccounts() async {
     mailAliases = await mailAliasApi.fetchAliasesList(
-        context, widget.mailHostingId, widget.mailboxName);
+        context, widget.mailHostingId, widget.mailAccount.mailboxName!);
     setState(() {});
   }
 
   Widget getBody() {
+    String domain = widget.mailAccount.mailboxIdn!
+        .substring(widget.mailAccount.mailboxIdn!.indexOf('@'));
+
     if (mailAliases.isEmpty) {
       return const Center(
         child: Column(
@@ -55,7 +58,7 @@ class _MailAliasesScreensState extends State<MailAliasesScreen> {
                 itemCount: mailAliases.length,
                 itemBuilder: (context, index) => ListTile(
                   leading: const Icon(Icons.email),
-                  title: Text(mailAliases[index]),
+                  title: Text(mailAliases[index] + domain),
                   trailing: IconButton(
                     onPressed: () async {
                       String alias = mailAliases[index];
@@ -63,12 +66,15 @@ class _MailAliasesScreensState extends State<MailAliasesScreen> {
                         mailAliases[index] =
                             AppLocalizations.of(context)!.api_deleting_alias;
                       });
-                      await mailAliasApi.removeAlias(context,
-                          widget.mailHostingId, widget.mailboxName, alias);
+                      await mailAliasApi.removeAlias(
+                          context,
+                          widget.mailHostingId,
+                          widget.mailAccount.mailboxName!,
+                          alias);
                       await mailAliasApi.fetchAliasesList(
                         context,
                         widget.mailHostingId,
-                        widget.mailboxName,
+                        widget.mailAccount.mailboxName!,
                       );
                       setState(() {});
                     },
@@ -85,34 +91,13 @@ class _MailAliasesScreensState extends State<MailAliasesScreen> {
                   ),
                 ),
               ),
-              SizedBox(
-                height: 40,
-                child: Center(
-                  child: IconButton(
-                    onPressed: () async {
-                      await Navigator.of(context).push(MaterialPageRoute(
-                          builder: (ctx) => AddMailAliasesScreen(
-                                mailHostingId: widget.mailHostingId,
-                                mailboxName: widget.mailboxName,
-                              )));
-                      await mailAliasApi.fetchAliasesList(
-                        context,
-                        widget.mailHostingId,
-                        widget.mailboxName,
-                      );
-                      setState(() {});
-                    },
-                    icon: const Icon(Icons.add),
-                  ),
-                ),
-              )
             ],
           ),
           onRefresh: () async {
             await mailAliasApi.fetchAliasesList(
               context,
               widget.mailHostingId,
-              widget.mailboxName,
+              widget.mailAccount.mailboxName!,
             );
             setState(() {});
           });
@@ -126,15 +111,26 @@ class _MailAliasesScreensState extends State<MailAliasesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.mail_aliases!),
+        title: Text(
+          AppLocalizations.of(context)!
+              .mail_aliases(widget.mailAccount.mailboxIdn!),
+        ),
         actions: [
           IconButton(
             onPressed: () async {
-              await Navigator.of(context).push(
-                MaterialPageRoute(builder: (ctx) => const SettingsScreen()),
+              await Navigator.of(context).push(MaterialPageRoute(
+                  builder: (ctx) => AddMailAliasesScreen(
+                        mailHostingId: widget.mailHostingId,
+                        mailboxName: widget.mailAccount.mailboxName!,
+                      )));
+              await mailAliasApi.fetchAliasesList(
+                context,
+                widget.mailHostingId,
+                widget.mailAccount.mailboxName!,
               );
+              setState(() {});
             },
-            icon: const Icon(Icons.settings),
+            icon: const Icon(Icons.add),
           ),
         ],
       ),
