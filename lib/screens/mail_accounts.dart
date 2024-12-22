@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:infomaniak_email_admin_app/models/infomaniak/account.dart';
 import 'package:infomaniak_email_admin_app/models/infomaniak/mail_account.dart';
-import 'package:infomaniak_email_admin_app/models/infomaniak/mail_product.dart';
 import 'package:infomaniak_email_admin_app/provider/infomaniak_api/mail_account.dart';
-import 'package:infomaniak_email_admin_app/provider/infomaniak_api/mail_product.dart';
 import 'package:infomaniak_email_admin_app/screens/mail_aliases.dart';
 import 'package:infomaniak_email_admin_app/screens/settings.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MailAccountsScreen extends StatefulWidget {
   final int accountId;
@@ -35,7 +33,7 @@ class _MailAccountsScreensState extends State<MailAccountsScreen> {
 
   Widget getBody() {
     if (mailAccounts.isEmpty) {
-      return Center(
+      return const Center(
         child: Column(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -50,18 +48,12 @@ class _MailAccountsScreensState extends State<MailAccountsScreen> {
       return RefreshIndicator(
           child: ListView(
             children: [
-              Container(
-                height: 40,
-                child: const Center(
-                  child: Text('Mail accounts'),
-                ),
-              ),
               ListView.builder(
-                physics: ScrollPhysics(),
+                physics: const ScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: mailAccounts.length,
                 itemBuilder: (context, index) => ListTile(
-                  leading: Icon(Icons.email),
+                  leading: const Icon(Icons.email),
                   onTap: () {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (ctx) => MailAliasesScreen(
@@ -78,7 +70,7 @@ class _MailAccountsScreensState extends State<MailAccountsScreen> {
             await mailAccountApi.fetchAccountList(context, widget.accountId);
           });
     }
-    return SizedBox(
+    return const SizedBox(
       height: 8,
     );
   }
@@ -87,15 +79,15 @@ class _MailAccountsScreensState extends State<MailAccountsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Infomaniak mail admin tool'),
+        title: Text(AppLocalizations.of(context)!.mail_accounts!),
         actions: [
           IconButton(
             onPressed: () async {
               await Navigator.of(context).push(
-                MaterialPageRoute(builder: (ctx) => SettingsScreen()),
+                MaterialPageRoute(builder: (ctx) => const SettingsScreen()),
               );
             },
-            icon: Icon(Icons.settings),
+            icon: const Icon(Icons.settings),
           ),
         ],
       ),

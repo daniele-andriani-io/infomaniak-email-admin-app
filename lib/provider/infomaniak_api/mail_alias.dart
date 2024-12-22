@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:infomaniak_email_admin_app/constants/links.dart';
 import 'package:http/http.dart' as http;
 import 'package:infomaniak_email_admin_app/provider/api_key.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MailAliasApi {
   List<String> aliases = [];
@@ -43,7 +44,7 @@ class MailAliasApi {
           int code = apiResponse.statusCode;
           throw Exception("$message ($code)");
         }
-        throw Exception("Call to API failed.");
+        throw Exception(AppLocalizations.of(context)!.api_call_failed!);
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -61,7 +62,7 @@ class MailAliasApi {
         "$infomaniakApiBaseUrl/$version/$endpointName/$mailHostingId/$endpointSubName/$mailboxName/$endpointSubSubName";
 
     final Map<String, String> data = <String, String>{};
-    data['alias'] = "$newAlias";
+    data['alias'] = newAlias;
     try {
       http.Response apiResponse = await http.post(
         Uri.parse(endpoint),
@@ -72,15 +73,15 @@ class MailAliasApi {
       Map<String, dynamic> response = jsonDecode(apiResponse.body);
 
       if (apiResponse.statusCode == 200 && response['result'] == "success") {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text('New alias added')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(AppLocalizations.of(context)!.api_new_alias_added)));
       } else {
         if (response.containsKey('error')) {
           String message = response['error']['description'];
           int code = apiResponse.statusCode;
           throw Exception("$message ($code)");
         }
-        throw Exception("Call to API failed.");
+        throw Exception(AppLocalizations.of(context)!.api_call_failed!);
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -104,15 +105,16 @@ class MailAliasApi {
       Map<String, dynamic> response = jsonDecode(apiResponse.body);
 
       if (apiResponse.statusCode == 200 && response['result'] == "success") {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text("Alias '$alias' deleted")));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content:
+                Text(AppLocalizations.of(context)!.api_alias_deleted(alias))));
       } else {
         if (response.containsKey('error')) {
           String message = response['error']['description'];
           int code = apiResponse.statusCode;
           throw Exception("$message ($code)");
         }
-        throw Exception("Call to API failed.");
+        throw Exception(AppLocalizations.of(context)!.api_call_failed!);
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(

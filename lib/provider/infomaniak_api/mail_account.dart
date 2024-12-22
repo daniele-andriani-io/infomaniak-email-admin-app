@@ -3,10 +3,10 @@ import 'dart:core';
 
 import 'package:flutter/material.dart';
 import 'package:infomaniak_email_admin_app/constants/links.dart';
-import 'package:infomaniak_email_admin_app/models/infomaniak/account.dart';
 import 'package:http/http.dart' as http;
 import 'package:infomaniak_email_admin_app/models/infomaniak/mail_account.dart';
 import 'package:infomaniak_email_admin_app/provider/api_key.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MailAccountApi {
   List<MailAccountModel> accounts = [];
@@ -44,7 +44,7 @@ class MailAccountApi {
           int code = apiResponse.statusCode;
           throw Exception("$message ($code)");
         }
-        throw Exception("Call to API failed.");
+        throw Exception(AppLocalizations.of(context)!.api_call_failed!);
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(

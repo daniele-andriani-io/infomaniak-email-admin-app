@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:infomaniak_email_admin_app/models/infomaniak/account.dart';
+import 'package:infomaniak_email_admin_app/models/infomaniak/mail_product.dart';
 import 'package:infomaniak_email_admin_app/provider/api_key.dart';
-import 'package:infomaniak_email_admin_app/provider/infomaniak_api/account.dart';
-import 'package:infomaniak_email_admin_app/screens/how_to_start.dart';
-import 'package:infomaniak_email_admin_app/screens/mail_products.dart';
+import 'package:infomaniak_email_admin_app/provider/infomaniak_api/mail_product.dart';
+import 'package:infomaniak_email_admin_app/screens/mail_accounts.dart';
 import 'package:infomaniak_email_admin_app/screens/settings.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,67 +17,70 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String? _apiKey;
-  AccountApi accountApi = AccountApi();
-  List<AccountModel> accounts = [];
+  MailProductApi mailProductApi = MailProductApi();
+  List<MailProductModel> mailProducts = [];
 
   @override
   void initState() {
     _apiKey = apiKeyProvider.getKey();
-    _initAccounts();
+    if (_apiKey != null) {
+      _initMailAccounts();
+    }
     super.initState();
   }
 
-  void _initAccounts() async {
-    accounts = await accountApi.fetchAccountList(context);
+  void _initMailAccounts() async {
+    mailProducts = await mailProductApi.fetchProductList(context);
     setState(() {});
   }
 
   Widget getBody() {
-    if (_apiKey == null || accounts.isEmpty) {
-      return const Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('Please setup an API key to start'),
-            Text('To do so, please go to the settings menu in the top right'),
-          ],
-        ),
-      );
-    }
-
-    if (accounts.isNotEmpty) {
+    if (mailProducts.isNotEmpty) {
       return RefreshIndicator(
           child: ListView(
             children: [
-              Container(
-                height: 40,
-                child: const Center(
-                  child: Text('Accounts'),
-                ),
-              ),
               ListView.builder(
-                physics: ScrollPhysics(),
+                physics: const ScrollPhysics(),
                 shrinkWrap: true,
-                itemCount: accounts.length,
+                itemCount: mailProducts.length,
                 itemBuilder: (context, index) => ListTile(
-                  leading: Icon(Icons.email),
-                  onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (ctx) => MailProductsScreen(
-                            accountId: accounts[index].id!)));
+                  leading: const Icon(Icons.email),
+                  onTap: () async {
+                    await Navigator.of(context).push(MaterialPageRoute(
+                        builder: (ctx) => MailAccountsScreen(
+                            accountId: mailProducts[index].id!)));
+                    setState(() {});
                   },
-                  title: Text(accounts[index].name!),
+                  title: Text(mailProducts[index].customerName!),
                 ),
               ),
             ],
           ),
           onRefresh: () async {
-            await accountApi.fetchAccountList(context);
+            await mailProductApi.fetchProductList(context);
           });
     }
-    return SizedBox(
-      height: 8,
+
+    if (mailProducts.isEmpty && _apiKey != null) {
+      return const Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(),
+          ],
+        ),
+      );
+    }
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(AppLocalizations.of(context)!.start_APIinfo),
+          Text(AppLocalizations.of(context)!.start_APIconfig),
+        ],
+      ),
     );
   }
 
@@ -85,15 +88,17 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Infomaniak mail admin tool'),
+        title: Text(AppLocalizations.of(context)!.mail_products),
         actions: [
           IconButton(
             onPressed: () async {
               await Navigator.of(context).push(
-                MaterialPageRoute(builder: (ctx) => SettingsScreen()),
+                MaterialPageRoute(builder: (ctx) => const SettingsScreen()),
               );
+              _initMailAccounts();
+              setState(() {});
             },
-            icon: Icon(Icons.settings),
+            icon: const Icon(Icons.settings),
           ),
         ],
       ),

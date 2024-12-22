@@ -1,0 +1,82 @@
+{
+  "@@locale": "en",
+  "cancel": "Cancel",
+  "start_APIinfo": "Please setup an API key to start",
+  "start_APIconfig": "To do so, please go to the settings menu in the top right",
+  "mail_products": "Mail products",
+  "mail_accounts": "Mail accounts",
+  "mail_aliases": "Mail aliases",
+  "settings": "Settings",
+  "settings_add_API_key": "Add API key",
+  "settings_save_API_key": "Save API key",
+  "settings_test_API_key": "Test API key",
+  "settings_API_key_validation": "API key is required",
+  "settings_API_key_field": "Infomaniak API key",
+  "settings_API_important_info": "Please note that you can revoke the API key at any time and this will block any access this application has on your account. Everything is run locally, this data cannot be shared."
+  ,
+  "settings_delete_API_key": "Delete API key",
+  "settings_delete_API_key_modal_title": "Are you sure?",
+  "settings_delete_API_key_modal_text": "Once the API key is deleted you won't be able to retrieve it. Are you sure you want to delete this key?",
+  "settings_delete_API_key_modal_confirm": "Delete the API key",
+  "rewards_help": "Help me pay my bills by watching ads",
+  "rewards_error": "Oh no, something went wrong! Please try again",
+  "api_call_failed": "Call to the API failed",
+  "api_new_alias_added": "New alias added",
+  "api_deleting_alias": "Deleting...",
+  "api_alias_deleted": "Alias {aliasName} deleted",
+  "@api_alias_deleted": {
+    "description": "Name of the alias deleted",
+    "placeholders": {
+      "aliasName": {
+        "type": "String",
+        "example": "test"
+      }
+    }
+  },
+  "ad_watch_thanks": "{adsWatched, plural, =1{Thank you for your support!} other{Thank you for your support! ({adsWatched} ads seen)}}",
+  "@ad_watch_thanks": {
+    "description": "Number of ads seen",
+    "placeholders": {
+      "adsWatched": {
+        "type": "num",
+        "example": "compact"
+      }
+    }
+  },
+  "ad_watch_thanks_10": "Big thank you for your support! ({adsWatched} ads seen)",
+  "@ad_watch_thanks_10": {
+    "description": "Number of ads seen",
+    "placeholders": {
+      "adsWatched": {
+        "type": "num",
+        "example": "compact"
+      }
+    }
+  },
+  "ad_watch_thanks_50": "HUGE thank you for your support! ({adsWatched} ads seen)",
+  "@ad_watch_thanks_50": {
+    "description": "Number of ads seen",
+    "placeholders": {
+      "adsWatched": {
+        "type": "num",
+        "example": "compact"
+      }
+    }
+  },
+  "ad_watch_thanks_100": "WOW, you really like this app! ({adsWatched} ads seen)",
+  "@ad_watch_thanks_100": {
+    "description": "Number of ads seen",
+    "placeholders": {
+      "adsWatched": {
+        "type": "num",
+        "example": "compact"
+      }
+    }
+  },
+  "alias_create_new": "Create new alias",
+  "alias_new": "New alias",
+  "alias_new_validation": "An alias name is required",
+  "alias_save": "Save alias",
+  "how_to_start_title": "How to configure the API key",
+  "how_to_start_description": "# Hello dear user!\n For the application to work you will need to create an API key in your Infomaniak Manager account. To do so please follow these steps:\n\n1. Go to [Infomaniak Manager](https://manager.infomaniak.com/v3/ng/accounts/token/list) to create a new API token\n1. Give access to \"user_info\" and \"mail\" scopes to allow the application to access this data\n1. Copy the given API key (will only be visible once)\n1. Paste it in the following box"
+}

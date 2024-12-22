@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:infomaniak_email_admin_app/provider/ads_watched.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class RewardedAdWidget extends StatefulWidget {
   const RewardedAdWidget({super.key});
@@ -44,15 +44,15 @@ class _RewardedAdWidgetState extends State<RewardedAdWidget> {
               // Called when the ad failed to show full screen content.
               onAdFailedToShowFullScreenContent: (ad, err) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
+                  SnackBar(
                     content: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.heart_broken),
-                        SizedBox(
+                        const Icon(Icons.heart_broken),
+                        const SizedBox(
                           width: 8,
                         ),
-                        Text("Oh no, something went wrong! Please try again"),
+                        Text(AppLocalizations.of(context)!.rewards_error),
                       ],
                     ),
                   ),
@@ -73,15 +73,15 @@ class _RewardedAdWidgetState extends State<RewardedAdWidget> {
         // Called when an ad request failed.
         onAdFailedToLoad: (LoadAdError error) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
               content: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.heart_broken),
-                  SizedBox(
+                  const Icon(Icons.heart_broken),
+                  const SizedBox(
                     width: 8,
                   ),
-                  Text("Oh no, something went wrong! Please try again"),
+                  Text(AppLocalizations.of(context)!.rewards_error),
                 ],
               ),
             ),
@@ -95,7 +95,7 @@ class _RewardedAdWidgetState extends State<RewardedAdWidget> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: const Text('Help me pay my bills by watching ads'),
+      title: Text(AppLocalizations.of(context)!.rewards_help),
       trailing: IconButton(
         onPressed: () {
           loadAd();
@@ -107,11 +107,11 @@ class _RewardedAdWidgetState extends State<RewardedAdWidget> {
                   content: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(adsWatchedProvider.getThanksPhrase()),
-                      SizedBox(
+                      Text(adsWatchedProvider.getThanksPhrase(context)),
+                      const SizedBox(
                         width: 8,
                       ),
-                      Icon(Icons.favorite),
+                      const Icon(Icons.favorite),
                     ],
                   ),
                 ),

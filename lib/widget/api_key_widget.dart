@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:infomaniak_email_admin_app/provider/api_key.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../screens/how_to_start.dart';
 
@@ -19,7 +20,7 @@ class _ApiKeyWidgetState extends State<ApiKeyWidget> {
   ListTile build(BuildContext context) {
     if (_apiKey == null) {
       return ListTile(
-        title: const Text('Add API key'),
+        title: Text(AppLocalizations.of(context)!.settings_add_API_key),
         trailing: IconButton(
           onPressed: () async {
             await Navigator.of(context).push(
@@ -36,7 +37,7 @@ class _ApiKeyWidgetState extends State<ApiKeyWidget> {
     }
 
     return ListTile(
-      title: const Text('Delete API key'),
+      title: Text(AppLocalizations.of(context)!.settings_delete_API_key),
       trailing: IconButton(
         onPressed: () => _removeApiKeyValidation(context),
         icon: const Icon(
@@ -51,9 +52,10 @@ class _ApiKeyWidgetState extends State<ApiKeyWidget> {
       context: context,
       builder: (BuildContext ctx) {
         return AlertDialog(
-          title: const Text('Are you sure?'),
+          title: Text(AppLocalizations.of(context)!
+              .settings_delete_API_key_modal_title),
           content: Text(
-            'Once the API key is deleted you won\'t be able to retrieve it. Are you sure you want to delete this key?',
+            AppLocalizations.of(context)!.settings_delete_API_key_modal_text,
             style: Theme.of(ctx).textTheme.bodyLarge!.copyWith(
                   color: Colors.black,
                 ),
@@ -63,7 +65,7 @@ class _ApiKeyWidgetState extends State<ApiKeyWidget> {
               onPressed: () {
                 Navigator.of(ctx).pop();
               },
-              child: const Text('Cancel'),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
             TextButton(
               onPressed: () {
@@ -73,7 +75,8 @@ class _ApiKeyWidgetState extends State<ApiKeyWidget> {
                 });
                 Navigator.of(ctx).pop();
               },
-              child: const Text('Delete the API key'),
+              child: Text(AppLocalizations.of(context)!
+                  .settings_delete_API_key_modal_confirm),
             ),
           ],
         );

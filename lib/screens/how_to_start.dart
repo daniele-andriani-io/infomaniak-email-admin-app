@@ -1,6 +1,11 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:infomaniak_email_admin_app/models/infomaniak/profile.dart';
 import 'package:infomaniak_email_admin_app/provider/api_key.dart';
+import 'package:infomaniak_email_admin_app/provider/infomaniak_account_id.dart';
+import 'package:infomaniak_email_admin_app/provider/infomaniak_api/profile.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HowToStartScreen extends StatefulWidget {
   const HowToStartScreen({
@@ -15,11 +20,14 @@ class HowToStartScreen extends StatefulWidget {
 
 class _HowToStartScreenState extends State<HowToStartScreen> {
   final _formKey = GlobalKey<FormState>();
+  ProfileApi profileApi = ProfileApi();
   String _enteredAPIKey = '';
+  bool _isTesting = false;
 
   void _saveAPIKey() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
+      _testAPIKey(andSave: true);
       setState(() {
         apiKeyProvider.changeKey(_enteredAPIKey);
         Navigator.of(context).pop();
@@ -27,9 +35,54 @@ class _HowToStartScreenState extends State<HowToStartScreen> {
     }
   }
 
+  void _testAPIKey({bool andSave = false}) async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      setState(() {
+        _isTesting = true;
+      });
+      ProfileModel? tempProfil =
+          await profileApi.fetchProfile(context, _enteredAPIKey);
+      setState(() {
+        String message = "Something went wrong try again";
+        IconData icon = Icons.error;
+        if (tempProfil != null) {
+          message =
+              "The API key you tested is linked to ${tempProfil.displayName}";
+          icon = Icons.check;
+          if (andSave) {
+            infomaniakAccountIdProvider
+                .changeAccountId(tempProfil.currentAccountId!);
+          }
+        }
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Row(
+          children: [
+            Text(message),
+            const SizedBox(
+              width: 8,
+            ),
+            Icon(icon),
+          ],
+        )));
+        _isTesting = false;
+      });
+    }
+  }
+
+  Future<void> _launchUrl(String link, String? title, String other) async {
+    final Uri _url = Uri.parse(link);
+    if (!await launchUrl(_url)) {
+      throw Exception('Could not launch $_url');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.how_to_start_title),
+      ),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -38,46 +91,18 @@ class _HowToStartScreenState extends State<HowToStartScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Hello dear user!',
-                style: Theme.of(context).textTheme.titleLarge!,
-              ),
-              const SizedBox(
-                height: 16,
-              ),
-              Text(
-                'For the application to work you will need to create an API key in your Infomaniak Manager account. To do so please follow these steps:',
-                style: Theme.of(context).textTheme.bodyLarge!,
-                textAlign: TextAlign.justify,
-              ),
-              const SizedBox(
-                height: 16,
-              ),
-              Text(
-                '1. Go to https://manager.infomaniak.com/v3/ng/accounts/token/list to create a new API token',
-                style: Theme.of(context).textTheme.bodyMedium!,
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              Text(
-                '2. Give access to "user_info" and "mail" scopes to allow the application to access this data',
-                style: Theme.of(context).textTheme.bodyMedium!,
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              Text(
-                '3. Copy the given API key (will only be visible once)',
-                style: Theme.of(context).textTheme.bodyMedium!,
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              Text(
-                '4. Paste it in the following box',
-                style: Theme.of(context).textTheme.bodyMedium!,
-                textAlign: TextAlign.start,
+              MarkdownBody(
+                data: AppLocalizations.of(context)!.how_to_start_description,
+                onTapLink: (title, link, other) async {
+                  await _launchUrl(link!, title, other);
+                },
+                styleSheet:
+                    MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(
+                  textScaler: TextScaler.linear(1.2),
+                  h1: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
               ),
               Form(
                 key: _formKey,
@@ -85,14 +110,17 @@ class _HowToStartScreenState extends State<HowToStartScreen> {
                   style: Theme.of(context).textTheme.titleMedium!.copyWith(
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
-                  decoration: const InputDecoration(
-                    label: Text('Infomaniak API key'),
+                  decoration: InputDecoration(
+                    label: Text(
+                      AppLocalizations.of(context)!.settings_API_key_field,
+                    ),
                   ),
                   validator: (value) {
                     if (value == null ||
                         value.isEmpty ||
                         value.trim().length <= 1) {
-                      return 'API key is required';
+                      return AppLocalizations.of(context)!
+                          .settings_API_key_validation;
                     }
                     return null;
                   },
@@ -112,7 +140,7 @@ class _HowToStartScreenState extends State<HowToStartScreen> {
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
-                    label: const Text('Cancel'),
+                    label: Text(AppLocalizations.of(context)!.cancel),
                   ),
                   const SizedBox(
                     width: 8,
@@ -120,7 +148,23 @@ class _HowToStartScreenState extends State<HowToStartScreen> {
                   ElevatedButton.icon(
                     icon: const Icon(Icons.add),
                     onPressed: _saveAPIKey,
-                    label: const Text('Save API key'),
+                    label: Text(
+                        AppLocalizations.of(context)!.settings_save_API_key),
+                  ),
+                  const SizedBox(
+                    width: 8,
+                  ),
+                  ElevatedButton.icon(
+                    icon: _isTesting
+                        ? const SizedBox(
+                            height: 16,
+                            width: 16,
+                            child: CircularProgressIndicator(),
+                          )
+                        : const Icon(Icons.approval),
+                    onPressed: _testAPIKey,
+                    label: Text(
+                        AppLocalizations.of(context)!.settings_test_API_key),
                   ),
                 ],
               ),
@@ -128,13 +172,13 @@ class _HowToStartScreenState extends State<HowToStartScreen> {
                 height: 16,
               ),
               Container(
-                padding: EdgeInsets.all(16),
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Colors.red,
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Text(
-                  'Please note that you can revoke the API key at any time and this will block any access this application hase on your account. Also everything is run locally, no data will ever be shared with third party partners.',
+                  AppLocalizations.of(context)!.settings_API_important_info,
                   style: Theme.of(context).textTheme.bodyMedium!,
                   textAlign: TextAlign.justify,
                 ),

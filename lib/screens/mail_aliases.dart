@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:infomaniak_email_admin_app/models/infomaniak/account.dart';
-import 'package:infomaniak_email_admin_app/models/infomaniak/mail_account.dart';
-import 'package:infomaniak_email_admin_app/models/infomaniak/mail_product.dart';
-import 'package:infomaniak_email_admin_app/provider/infomaniak_api/mail_account.dart';
 import 'package:infomaniak_email_admin_app/provider/infomaniak_api/mail_alias.dart';
-import 'package:infomaniak_email_admin_app/provider/infomaniak_api/mail_product.dart';
 import 'package:infomaniak_email_admin_app/screens/add_mail_aliases.dart';
 import 'package:infomaniak_email_admin_app/screens/settings.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MailAliasesScreen extends StatefulWidget {
   final int mailHostingId;
@@ -38,7 +34,7 @@ class _MailAliasesScreensState extends State<MailAliasesScreen> {
 
   Widget getBody() {
     if (mailAliases.isEmpty) {
-      return Center(
+      return const Center(
         child: Column(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -53,24 +49,19 @@ class _MailAliasesScreensState extends State<MailAliasesScreen> {
       return RefreshIndicator(
           child: ListView(
             children: [
-              Container(
-                height: 40,
-                child: const Center(
-                  child: Text('mail aliases'),
-                ),
-              ),
               ListView.builder(
-                physics: ScrollPhysics(),
+                physics: const ScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: mailAliases.length,
                 itemBuilder: (context, index) => ListTile(
-                  leading: Icon(Icons.email),
+                  leading: const Icon(Icons.email),
                   title: Text(mailAliases[index]),
                   trailing: IconButton(
                     onPressed: () async {
                       String alias = mailAliases[index];
                       setState(() {
-                        mailAliases[index] = 'deleting...';
+                        mailAliases[index] =
+                            AppLocalizations.of(context)!.api_deleting_alias;
                       });
                       await mailAliasApi.removeAlias(context,
                           widget.mailHostingId, widget.mailboxName, alias);
@@ -81,7 +72,8 @@ class _MailAliasesScreensState extends State<MailAliasesScreen> {
                       );
                       setState(() {});
                     },
-                    icon: mailAliases[index] == 'deleting...'
+                    icon: mailAliases[index] ==
+                            AppLocalizations.of(context)!.api_deleting_alias
                         ? const SizedBox(
                             height: 16,
                             width: 16,
@@ -93,7 +85,7 @@ class _MailAliasesScreensState extends State<MailAliasesScreen> {
                   ),
                 ),
               ),
-              Container(
+              SizedBox(
                 height: 40,
                 child: Center(
                   child: IconButton(
@@ -110,7 +102,7 @@ class _MailAliasesScreensState extends State<MailAliasesScreen> {
                       );
                       setState(() {});
                     },
-                    icon: Icon(Icons.add),
+                    icon: const Icon(Icons.add),
                   ),
                 ),
               )
@@ -125,7 +117,7 @@ class _MailAliasesScreensState extends State<MailAliasesScreen> {
             setState(() {});
           });
     }
-    return SizedBox(
+    return const SizedBox(
       height: 8,
     );
   }
@@ -134,15 +126,15 @@ class _MailAliasesScreensState extends State<MailAliasesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Infomaniak mail admin tool'),
+        title: Text(AppLocalizations.of(context)!.mail_aliases!),
         actions: [
           IconButton(
             onPressed: () async {
               await Navigator.of(context).push(
-                MaterialPageRoute(builder: (ctx) => SettingsScreen()),
+                MaterialPageRoute(builder: (ctx) => const SettingsScreen()),
               );
             },
-            icon: Icon(Icons.settings),
+            icon: const Icon(Icons.settings),
           ),
         ],
       ),

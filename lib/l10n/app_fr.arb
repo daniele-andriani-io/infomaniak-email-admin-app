@@ -1,0 +1,82 @@
+{
+  "@@locale": "fr",
+  "cancel": "Annuler",
+  "start_APIinfo": "Veuillez introduire votre clé API pour démarrer",
+  "start_APIconfig": "Pour ainsi faire vous devez vous rendre dans la configuration de l'application en haut à droite",
+  "mail_products": "Produits mail",
+  "mail_accounts": "Comptes mail",
+  "mail_aliases": "Aliases de mail",
+  "settings": "Configuration",
+  "settings_add_API_key": "Ajouter une clé API",
+  "settings_save_API_key": "Enregistrer",
+  "settings_test_API_key": "Tester",
+  "settings_API_key_validation": "Une clé API est requise",
+  "settings_API_key_field": "Clé API d'Infomaniak",
+  "settings_API_important_info": "Veuillez noter qu'a tout moment il vous est possible de révoquer la clé API a tout moment ce qui bloquera tous les accès qu'a l'application sur votre compte. Tout fonctionne en local, cette information ne peut pas être partagée."
+,
+  "settings_delete_API_key": "Supprimer la clé API",
+  "settings_delete_API_key_modal_title": "Êtes-vous sûr?",
+  "settings_delete_API_key_modal_text": "Une fois la clé API supprimée elle ne peut pas être récupérée. Êtes-vous sûr de vouloir la supprimer?",
+  "settings_delete_API_key_modal_confirm": "Supprimer la clé",
+  "rewards_help": "Soutenez-moi en regardant des publicités",
+  "rewards_error": "Oh non, quelque chose n'a pas fonctionné correctement. Veuillez rééssayer plus tard.",
+  "api_call_failed": "Echec de l'appel API",
+  "api_new_alias_added": "Nouvel alias ajouté",
+  "api_deleting_alias": "Suppression en cours...",
+  "api_alias_deleted": "L'alias {aliasName} a été supprimé",
+  "@api_alias_deleted": {
+    "description": "Nom de l'alias à supprimer",
+    "placeholders": {
+      "aliasName": {
+        "type": "String",
+        "example": "test"
+      }
+    }
+  },
+  "ad_watch_thanks": "{adsWatched, plural, =1{Merci pour votre support!} other{Merci pour votre support! ({adsWatched} pubs vues)}}",
+  "@ad_watch_thanks": {
+    "description": "Nombre de pubs vues",
+    "placeholders": {
+      "adsWatched": {
+        "type": "num",
+        "example": "compact"
+      }
+    }
+  },
+  "ad_watch_thanks_10": "Un grand merci pour votre support! {adsWatched} pubs vues)",
+  "@ad_watch_thanks_10": {
+    "description": "Nombre de pubs vues",
+    "placeholders": {
+      "adsWatched": {
+        "type": "num",
+        "example": "compact"
+      }
+    }
+  },
+  "ad_watch_thanks_50": "Un ENORME merci pour votre support! ({adsWatched} pubs vues)",
+  "@ad_watch_thanks_50": {
+    "description": "Nombre de pubs vues",
+    "placeholders": {
+      "adsWatched": {
+        "type": "num",
+        "example": "compact"
+      }
+    }
+  },
+  "ad_watch_thanks_100": "WOW, vous appréciez vraiement cet application! ({adsWatched} pubs vues)",
+  "@ad_watch_thanks_100": {
+    "description": "Number of ads seen",
+    "placeholders": {
+      "adsWatched": {
+        "type": "num",
+        "example": "compact"
+      }
+    }
+  },
+  "alias_create_new": "Créer un nouvel alias",
+  "alias_new": "Nouvel alias",
+  "alias_new_validation": "Le nom de l'alias est obligatoire",
+  "alias_save": "Sauvegarder l'alias",
+  "how_to_start_title": "Comment configurer la clé API",
+  "how_to_start_description": "# Bienvenu cher utilisateur!\n Pour que l'application puisse fonctionner il est nécessaire de créer une clé API dans votre compte Infomaniak Manager:\n\n1. Aller sur [Infomaniak Manager](https://manager.infomaniak.com/v3/ng/accounts/token/list) pour créer la clé API\n1. Donner les accès aux scopes \"user_info\" et \"mail\" pour que l'application accède aux informations nécessaires\n1. Copier la clé API (visible qu'une seule fois)\n1. Coller la clé API dans le champ ci-dessous"
+}

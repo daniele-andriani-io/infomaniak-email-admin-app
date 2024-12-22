@@ -4,38 +4,35 @@ import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:infomaniak_email_admin_app/constants/links.dart';
 import 'package:http/http.dart' as http;
-import 'package:infomaniak_email_admin_app/models/infomaniak/mail_product.dart';
-import 'package:infomaniak_email_admin_app/provider/api_key.dart';
+import 'package:infomaniak_email_admin_app/models/infomaniak/profile.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class MailProductApi {
-  List<MailProductModel> products = [];
-  String version = "1";
-  String endpointName = "mail_hostings";
+class ProfileApi {
+  ProfileModel? profileModel;
+  String version = "2";
+  String endpointName = "profile";
 
-  Map<String, String> getHeaders() {
+  Map<String, String> getHeaders(String tempApiKey) {
     final Map<String, String> headers = <String, String>{};
-    String apiKey = apiKeyProvider.getKey() ?? "";
-    headers['Authorization'] = "Bearer $apiKey";
+    headers['Authorization'] = "Bearer $tempApiKey";
     return headers;
   }
 
-  Future<List<MailProductModel>> fetchProductList(BuildContext context) async {
-    String endpoint =
-        "$infomaniakApiBaseUrl/$version/$endpointName?order_by=customer_name";
+  Future<ProfileModel?> fetchProfile(
+    BuildContext context,
+    String tempApiKey,
+  ) async {
+    String endpoint = "$infomaniakApiBaseUrl/$version/$endpointName";
 
     try {
       http.Response apiResponse = await http.get(
         Uri.parse(endpoint),
-        headers: getHeaders(),
+        headers: getHeaders(tempApiKey),
       );
       Map<String, dynamic> response = jsonDecode(apiResponse.body);
 
       if (apiResponse.statusCode == 200 && response['result'] == "success") {
-        products.removeRange(0, products.length);
-        for (var account in response['data']) {
-          products.add(MailProductModel.fromJson(account));
-        }
+        profileModel = ProfileModel.fromJson(response['data']);
       } else {
         if (response.containsKey('error')) {
           String message = response['error']['description'];
@@ -50,6 +47,7 @@ class MailProductApi {
         e.toString(),
       )));
     }
-    return products;
+
+    return profileModel;
   }
 }

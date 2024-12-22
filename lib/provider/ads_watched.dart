@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AdsWatchedProvider {
   late final SharedPreferences _prefs;
@@ -19,18 +21,16 @@ class AdsWatchedProvider {
     _prefs.setInt(KEY_NAME, _prefs.getInt(KEY_NAME)! + 1);
   }
 
-  String getThanksPhrase() {
-    int adsWatched = this.getNumberOfAdsWatched();
+  String getThanksPhrase(BuildContext context) {
+    int adsWatched = getNumberOfAdsWatched();
     if (adsWatched >= 100) {
-      return "WOW, you really like this app! ($adsWatched ads seen)";
+      return AppLocalizations.of(context)!.ad_watch_thanks_100(adsWatched);
     } else if (adsWatched >= 50) {
-      return "HUGE thank you for your support! ($adsWatched ads seen)";
+      return AppLocalizations.of(context)!.ad_watch_thanks_50(adsWatched);
     } else if (adsWatched >= 10) {
-      return "Big thank you for your support! ($adsWatched ads seen)";
-    } else if (adsWatched > 1) {
-      return "Thank you for your support! ($adsWatched ads seen)";
+      return AppLocalizations.of(context)!.ad_watch_thanks_10(adsWatched);
     }
-    return 'Thank you for your support!';
+    return AppLocalizations.of(context)!.ad_watch_thanks(adsWatched);
   }
 }
 

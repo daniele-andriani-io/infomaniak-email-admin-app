@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:infomaniak_email_admin_app/models/infomaniak/account.dart';
-import 'package:infomaniak_email_admin_app/models/infomaniak/mail_account.dart';
-import 'package:infomaniak_email_admin_app/models/infomaniak/mail_product.dart';
-import 'package:infomaniak_email_admin_app/provider/infomaniak_api/mail_account.dart';
 import 'package:infomaniak_email_admin_app/provider/infomaniak_api/mail_alias.dart';
-import 'package:infomaniak_email_admin_app/provider/infomaniak_api/mail_product.dart';
-import 'package:infomaniak_email_admin_app/screens/settings.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AddMailAliasesScreen extends StatefulWidget {
   final int mailHostingId;
@@ -43,7 +38,9 @@ class _AddMailAliasesScreensState extends State<AddMailAliasesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Create new alias')),
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.alias_create_new),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(8),
         child: Column(
@@ -54,14 +51,13 @@ class _AddMailAliasesScreensState extends State<AddMailAliasesScreen> {
                 style: Theme.of(context).textTheme.titleMedium!.copyWith(
                       color: Theme.of(context).colorScheme.onSurface,
                     ),
-                decoration: const InputDecoration(
-                  label: Text('New alias'),
-                ),
+                decoration: InputDecoration(
+                    label: Text(AppLocalizations.of(context)!.alias_new)),
                 validator: (value) {
                   if (value == null ||
                       value.isEmpty ||
                       value.trim().length <= 1) {
-                    return 'An alias name is required';
+                    return AppLocalizations.of(context)!.alias_new_validation;
                   }
                   return null;
                 },
@@ -70,7 +66,7 @@ class _AddMailAliasesScreensState extends State<AddMailAliasesScreen> {
                 },
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 8,
             ),
             Row(
@@ -87,7 +83,7 @@ class _AddMailAliasesScreensState extends State<AddMailAliasesScreen> {
                         )
                       : const Icon(Icons.add),
                   onPressed: _saveAlias,
-                  label: const Text('Save API key'),
+                  label: Text(AppLocalizations.of(context)!.alias_save),
                 ),
               ],
             ),
