@@ -86,6 +86,7 @@
   "alias_new": "New alias",
   "alias_new_validation": "An alias name is required",
   "alias_save": "Save alias",
+  "alias_generate": "Generate alias",
   "how_to_start_title": "How to configure the API key",
   "how_to_start_description": "# Hello dear user!\n For the application to work you will need to create an API key in your Infomaniak Manager account. To do so please follow these steps:\n\n1. Go to [Infomaniak Manager](https://manager.infomaniak.com/v3/ng/accounts/token/list) to create a new API token\n1. Give access to \"user_info\" and \"mail\" scopes to allow the application to access this data\n1. Copy the given API key (will only be visible once)\n1. Paste it in the following box"
 }

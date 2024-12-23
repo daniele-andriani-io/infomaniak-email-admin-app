@@ -6,6 +6,5 @@ Infomaniak ecosystem.
 ## List of improvements I would like to add in the future
 
 * give the option to add a description to an alias to know for which service/website it has been used
-* add the option to generate a random name alias
 * add the option to create new email address
 * add search function to all pages

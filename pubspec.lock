@@ -161,10 +161,10 @@ packages:
     dependency: transitive
     description:
       name: http_parser
-      sha256: "2aa08ce0341cc9b354a498388e30986515406668dbcc4f7c950c3e715496693b"
+      sha256: "76d306a1c3afb33fe82e2bbacad62a61f409b5634c915fceb0d799de1a913360"
       url: "https://pub.dev"
     source: hosted
-    version: "4.0.2"
+    version: "4.1.1"
   intl:
     dependency: "direct main"
     description:
@@ -321,10 +321,10 @@ packages:
     dependency: "direct main"
     description:
       name: shared_preferences
-      sha256: "95f9997ca1fb9799d494d0cb2a780fd7be075818d59f00c43832ed112b158a82"
+      sha256: "3c7e73920c694a436afaf65ab60ce3453d91f84208d761fbd83fc21182134d93"
       url: "https://pub.dev"
     source: hosted
-    version: "2.3.3"
+    version: "2.3.4"
   shared_preferences_android:
     dependency: transitive
     description:
@@ -562,6 +562,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.16.3"
+  word_generator:
+    dependency: "direct main"
+    description:
+      name: word_generator
+      sha256: "1703522a6ddf56b9c2331105c52f70a1f5f244b7de2512a2eb10284fa90d8e30"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.4.4"
   xdg_directories:
     dependency: transitive
     description:

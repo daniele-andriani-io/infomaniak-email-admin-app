@@ -86,6 +86,7 @@
   "alias_new": "Nouvel alias",
   "alias_new_validation": "Le nom de l'alias est obligatoire",
   "alias_save": "Sauvegarder l'alias",
+  "alias_generate": "Alias aléatoire",
   "how_to_start_title": "Comment configurer la clé API",
   "how_to_start_description": "# Bienvenu cher utilisateur!\n Pour que l'application puisse fonctionner il est nécessaire de créer une clé API dans votre compte Infomaniak Manager:\n\n1. Aller sur [Infomaniak Manager](https://manager.infomaniak.com/v3/ng/accounts/token/list) pour créer la clé API\n1. Donner les accès aux scopes \"user_info\" et \"mail\" pour que l'application accède aux informations nécessaires\n1. Copier la clé API (visible qu'une seule fois)\n1. Coller la clé API dans le champ ci-dessous"
 }

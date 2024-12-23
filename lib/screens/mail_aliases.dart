@@ -121,7 +121,7 @@ class _MailAliasesScreensState extends State<MailAliasesScreen> {
               await Navigator.of(context).push(MaterialPageRoute(
                   builder: (ctx) => AddMailAliasesScreen(
                         mailHostingId: widget.mailHostingId,
-                        mailboxName: widget.mailAccount.mailboxName!,
+                        mailbox: widget.mailAccount,
                       )));
               await mailAliasApi.fetchAliasesList(
                 context,

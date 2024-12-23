@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:infomaniak_email_admin_app/models/infomaniak/mail_account.dart';
 import 'package:infomaniak_email_admin_app/provider/infomaniak_api/mail_alias.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:word_generator/word_generator.dart';
 
 class AddMailAliasesScreen extends StatefulWidget {
   final int mailHostingId;
-  final String mailboxName;
+  final MailAccountModel mailbox;
   const AddMailAliasesScreen(
-      {super.key, required this.mailHostingId, required this.mailboxName});
+      {super.key, required this.mailHostingId, required this.mailbox});
 
   @override
   State<AddMailAliasesScreen> createState() {
@@ -26,8 +28,8 @@ class _AddMailAliasesScreensState extends State<AddMailAliasesScreen> {
       setState(() {
         _isLoading = true;
       });
-      await mailAliasApi.createAlias(
-          context, widget.mailHostingId, widget.mailboxName, _newAlias);
+      await mailAliasApi.createAlias(context, widget.mailHostingId,
+          widget.mailbox.mailboxName!, _newAlias);
       setState(() {
         _isLoading = false;
         Navigator.of(context).pop();
@@ -35,8 +37,17 @@ class _AddMailAliasesScreensState extends State<AddMailAliasesScreen> {
     }
   }
 
+  void _generateAlias() {
+    String randomSentence = WordGenerator().randomSentence();
+    randomSentence = randomSentence.trim();
+    _newAlias = randomSentence.replaceAll(' ', '.');
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
+    String domain = widget.mailbox.mailboxIdn!
+        .substring(widget.mailbox.mailboxIdn!.indexOf('@'));
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.alias_create_new),
@@ -48,11 +59,14 @@ class _AddMailAliasesScreensState extends State<AddMailAliasesScreen> {
             Form(
               key: _formKey,
               child: TextFormField(
+                textAlign: TextAlign.end,
                 style: Theme.of(context).textTheme.titleMedium!.copyWith(
                       color: Theme.of(context).colorScheme.onSurface,
                     ),
                 decoration: InputDecoration(
-                    label: Text(AppLocalizations.of(context)!.alias_new)),
+                  label: Text(AppLocalizations.of(context)!.alias_new),
+                  suffixText: domain,
+                ),
                 validator: (value) {
                   if (value == null ||
                       value.isEmpty ||
@@ -64,6 +78,7 @@ class _AddMailAliasesScreensState extends State<AddMailAliasesScreen> {
                 onSaved: (value) {
                   _newAlias = value!;
                 },
+                controller: TextEditingController()..text = _newAlias,
               ),
             ),
             const SizedBox(
@@ -72,6 +87,14 @@ class _AddMailAliasesScreensState extends State<AddMailAliasesScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.auto_awesome),
+                  onPressed: _generateAlias,
+                  label: Text(AppLocalizations.of(context)!.alias_generate),
+                ),
+                const SizedBox(
+                  width: 8,
+                ),
                 ElevatedButton.icon(
                   icon: _isLoading
                       ? const SizedBox(
