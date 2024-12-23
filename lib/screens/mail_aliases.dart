@@ -58,7 +58,10 @@ class _MailAliasesScreensState extends State<MailAliasesScreen> {
                 itemCount: mailAliases.length,
                 itemBuilder: (context, index) => ListTile(
                   leading: const Icon(Icons.email),
-                  title: Text(mailAliases[index] + domain),
+                  title: mailAliases[index] ==
+                          AppLocalizations.of(context)!.api_deleting_alias
+                      ? Text(mailAliases[index])
+                      : Text(mailAliases[index] + domain),
                   trailing: IconButton(
                     onPressed: () async {
                       String alias = mailAliases[index];
