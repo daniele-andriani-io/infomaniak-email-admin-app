@@ -43,6 +43,17 @@
       }
     }
   },
+  "api_new_account_added": "Nouveau compte créé",
+  "api_account_removed": "Compte {accountName} supprimé",
+  "@api_account_removed": {
+    "description": "Name of the account deleted",
+    "placeholders": {
+      "accountName": {
+        "type": "String",
+        "example": "test"
+      }
+    }
+  },
   "ad_watch_thanks": "{adsWatched, plural, =1{Merci pour votre support!} other{Merci pour votre support! ({adsWatched} pubs vues)}}",
   "@ad_watch_thanks": {
     "description": "Nombre de pubs vues",
@@ -89,5 +100,24 @@
   "alias_save": "Sauvegarder l'alias",
   "alias_generate": "Alias aléatoire",
   "how_to_start_title": "Comment configurer la clé API",
-  "how_to_start_description": "# Bienvenu cher utilisateur!\n Pour que l'application puisse fonctionner il est nécessaire de créer une clé API dans votre compte Infomaniak Manager:\n\n1. Aller sur [Infomaniak Manager](https://manager.infomaniak.com/v3/ng/accounts/token/list) pour créer la clé API\n1. Donner les accès aux scopes \"user_info\" et \"mail\" pour que l'application accède aux informations nécessaires\n1. Copier la clé API (visible qu'une seule fois)\n1. Coller la clé API dans le champ ci-dessous"
+  "how_to_start_description": "# Bienvenu cher utilisateur!\n Pour que l'application puisse fonctionner il est nécessaire de créer une clé API dans votre compte Infomaniak Manager:\n\n1. Aller sur [Infomaniak Manager](https://manager.infomaniak.com/v3/ng/accounts/token/list) pour créer la clé API\n1. Donner les accès aux scopes \"user_info\" et \"mail\" pour que l'application accède aux informations nécessaires\n1. Copier la clé API (visible qu'une seule fois)\n1. Coller la clé API dans le champ ci-dessous",
+  "account_create_new": "Créer un nouveau compte mail",
+  "account_name": "Nom du compte",
+  "account_name_validation": "Le nom est requis",
+  "account_pwd": "Mot de passe du compte",
+  "account_pwd_validation": "Un mot de passe est requis",
+  "account_save": "Créer le compte",
+  "account_generate_pwd": "Générer un mot de passe",
+  "account_generate_msg": "Veuillez noter que le mot de passe généré ne pourra plus être affiché une fois que le formulaire sera soumis.",
+  "account_delete_account_title_msg": "En confirmant l'action vous supprimerez le compte ainsi que tous les emails contenus. Êtes-vous sûr de vouloir supprimer {emailAddress}?",
+  "@account_delete_account_title_msg": {
+    "description": "Email address which will be deleted",
+    "placeholders": {
+      "emailAddress": {
+        "type": "String",
+        "example": "test"
+      }
+    }
+  },
+  "account_delete_confirm": "Supprimer le compte"
 }

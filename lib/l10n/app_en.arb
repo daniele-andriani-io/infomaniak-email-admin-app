@@ -43,6 +43,17 @@
       }
     }
   },
+  "api_new_account_added": "New account added",
+  "api_account_removed": "Account {accountName} deleted",
+  "@api_account_removed": {
+    "description": "Name of the account deleted",
+    "placeholders": {
+      "accountName": {
+        "type": "String",
+        "example": "test"
+      }
+    }
+  },
   "ad_watch_thanks": "{adsWatched, plural, =1{Thank you for your support!} other{Thank you for your support! ({adsWatched} ads seen)}}",
   "@ad_watch_thanks": {
     "description": "Number of ads seen",
@@ -89,5 +100,24 @@
   "alias_save": "Save alias",
   "alias_generate": "Generate alias",
   "how_to_start_title": "How to configure the API key",
-  "how_to_start_description": "# Hello dear user!\n For the application to work you will need to create an API key in your Infomaniak Manager account. To do so please follow these steps:\n\n1. Go to [Infomaniak Manager](https://manager.infomaniak.com/v3/ng/accounts/token/list) to create a new API token\n1. Give access to \"user_info\" and \"mail\" scopes to allow the application to access this data\n1. Copy the given API key (will only be visible once)\n1. Paste it in the following box"
+  "how_to_start_description": "# Hello dear user!\n For the application to work you will need to create an API key in your Infomaniak Manager account. To do so please follow these steps:\n\n1. Go to [Infomaniak Manager](https://manager.infomaniak.com/v3/ng/accounts/token/list) to create a new API token\n1. Give access to \"user_info\" and \"mail\" scopes to allow the application to access this data\n1. Copy the given API key (will only be visible once)\n1. Paste it in the following box",
+  "account_create_new": "Create new mail account",
+  "account_name": "Account name",
+  "account_name_validation": "An account name is required",
+  "account_pwd": "Account password",
+  "account_pwd_validation": "An password name is required",
+  "account_save": "Save account",
+  "account_generate_pwd": "Generate password",
+  "account_generate_msg": "Please keep in mind that the generated password cannot be shown after this form has been submitted.",
+  "account_delete_account_title_msg": "By confirming you will delete the email account and all the contained emails. Are you sure you want to delete {emailAddress}?",
+  "@account_delete_account_title_msg": {
+    "description": "Email address which will be deleted",
+    "placeholders": {
+      "emailAddress": {
+        "type": "String",
+        "example": "test"
+      }
+    }
+  },
+  "account_delete_confirm": "Delete email account"
 }

@@ -47,8 +47,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   leading: const Icon(Icons.email),
                   onTap: () async {
                     await Navigator.of(context).push(MaterialPageRoute(
-                        builder: (ctx) => MailAccountsScreen(
-                            accountId: mailProducts[index].id!)));
+                        builder: (ctx) =>
+                            MailAccountsScreen(account: mailProducts[index])));
                     setState(() {});
                   },
                   title: Text(mailProducts[index].customerName!),

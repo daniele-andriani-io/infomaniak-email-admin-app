@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:infomaniak_email_admin_app/models/infomaniak/mail_account.dart';
+import 'package:infomaniak_email_admin_app/models/infomaniak/mail_product.dart';
 import 'package:infomaniak_email_admin_app/provider/infomaniak_api/mail_account.dart';
+import 'package:infomaniak_email_admin_app/screens/add_mail_account.dart';
 import 'package:infomaniak_email_admin_app/screens/mail_aliases.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MailAccountsScreen extends StatefulWidget {
-  final int accountId;
-  const MailAccountsScreen({super.key, required this.accountId});
+  final MailProductModel account;
+  const MailAccountsScreen({super.key, required this.account});
 
   @override
   State<MailAccountsScreen> createState() {
@@ -20,7 +22,7 @@ class _MailAccountsScreensState extends State<MailAccountsScreen> {
   MailAccountApi mailAccountApi = MailAccountApi();
   List<MailAccountModel> mailAccounts = [];
   bool _isLoading = false;
-  bool _isFilterd = false;
+  bool _isFiltered = false;
 
   @override
   void initState() {
@@ -30,28 +32,66 @@ class _MailAccountsScreensState extends State<MailAccountsScreen> {
 
   void _initMailAccounts() async {
     mailAccounts =
-        await mailAccountApi.fetchAccountList(context, widget.accountId);
+        await mailAccountApi.fetchAccountList(context, widget.account.id!);
     setState(() {});
   }
 
-  void _searchEmail(bool isFilted) async {
+  void _searchEmail(bool isFiltered) async {
     _formKey.currentState!.save();
     setState(() {
       _isLoading = true;
-      _isFilterd = isFilted;
+      _isFiltered = isFiltered;
     });
-    if (!isFilted) {
+
+    if (!_isFiltered) {
       _searchQuery = '';
     }
 
     mailAccounts = _searchQuery.length == 0
-        ? await mailAccountApi.fetchAccountList(context, widget.accountId)
+        ? await mailAccountApi.fetchAccountList(context, widget.account.id!)
         : await mailAccountApi.fetchAccountList(
-            context, widget.accountId, _searchQuery);
+            context, widget.account.id!, _searchQuery);
 
     setState(() {
       _isLoading = false;
     });
+  }
+
+  Future<void> _removeAccount(BuildContext context, int index) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          title: Text(AppLocalizations.of(context)!
+              .settings_delete_API_key_modal_title),
+          content: Text(
+            AppLocalizations.of(context)!.account_delete_account_title_msg(
+                "${mailAccounts[index].mailboxName!}@${widget.account.customerName!}"),
+            style: Theme.of(ctx).textTheme.bodyLarge!.copyWith(
+                  color: Colors.black,
+                ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+              child: Text(AppLocalizations.of(context)!.cancel),
+            ),
+            TextButton(
+              onPressed: () async {
+                await mailAccountApi.deleteAccount(context, widget.account.id!,
+                    mailAccounts[index].mailboxName!);
+                _searchEmail(true);
+                Navigator.pop(context);
+                setState(() {});
+              },
+              child: Text(AppLocalizations.of(context)!.account_delete_confirm),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Widget getBody() {
@@ -155,19 +195,25 @@ class _MailAccountsScreensState extends State<MailAccountsScreen> {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (ctx) => MailAliasesScreen(
-                          mailHostingId: widget.accountId,
+                          mailHostingId: widget.account.id!,
                           mailAccount: mailAccounts[index],
                         ),
                       ),
                     );
                   },
                   title: Text(mailAccounts[index].mailbox!),
+                  trailing: IconButton(
+                      onPressed: () async {
+                        await _removeAccount(context, index);
+                      },
+                      icon: Icon(Icons.delete)),
                 ),
               ),
             ],
           ),
           onRefresh: () async {
-            await mailAccountApi.fetchAccountList(context, widget.accountId);
+            await mailAccountApi.fetchAccountList(context, widget.account.id!);
+            setState(() {});
           });
     }
     return const Center(
@@ -186,6 +232,20 @@ class _MailAccountsScreensState extends State<MailAccountsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.mail_accounts!),
+        actions: [
+          IconButton(
+            onPressed: () async {
+              await Navigator.of(context).push(MaterialPageRoute(
+                  builder: (ctx) => AddMailAccountScreen(
+                        mailProduct: widget.account,
+                      )));
+              await mailAccountApi.fetchAccountList(
+                  context, widget.account.id!);
+              setState(() {});
+            },
+            icon: const Icon(Icons.add),
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(8),
