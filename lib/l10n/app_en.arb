@@ -1,6 +1,7 @@
 {
   "@@locale": "en",
   "cancel": "Cancel",
+  "not_found": "Not found",
   "start_APIinfo": "Please setup an API key to start",
   "start_APIconfig": "To do so, please go to the settings menu in the top right",
   "mail_products": "Mail products",

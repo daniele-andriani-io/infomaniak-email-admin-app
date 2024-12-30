@@ -15,8 +15,12 @@ class MailAccountsScreen extends StatefulWidget {
 }
 
 class _MailAccountsScreensState extends State<MailAccountsScreen> {
+  final _formKey = GlobalKey<FormState>();
+  String _searchQuery = '';
   MailAccountApi mailAccountApi = MailAccountApi();
   List<MailAccountModel> mailAccounts = [];
+  bool _isLoading = false;
+  bool _isFilterd = false;
 
   @override
   void initState() {
@@ -30,23 +34,117 @@ class _MailAccountsScreensState extends State<MailAccountsScreen> {
     setState(() {});
   }
 
-  Widget getBody() {
-    if (mailAccounts.isEmpty) {
-      return const Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircularProgressIndicator(),
-          ],
-        ),
-      );
+  void _searchEmail(bool isFilted) async {
+    _formKey.currentState!.save();
+    setState(() {
+      _isLoading = true;
+      _isFilterd = isFilted;
+    });
+    if (!isFilted) {
+      _searchQuery = '';
     }
 
-    if (mailAccounts.isNotEmpty) {
+    mailAccounts = _searchQuery.length == 0
+        ? await mailAccountApi.fetchAccountList(context, widget.accountId)
+        : await mailAccountApi.fetchAccountList(
+            context, widget.accountId, _searchQuery);
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  Widget getBody() {
+    if (mailAccounts.isNotEmpty || _searchQuery.length > 0) {
+      if (mailAccounts.isEmpty) {
+        return ListView(
+          children: [
+            ListTile(
+              title: Form(
+                key: _formKey,
+                child: TextFormField(
+                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                  onSaved: (value) {
+                    _searchQuery = value!;
+                  },
+                  validator: (value) {
+                    if (value == null ||
+                        value.isEmpty ||
+                        value.trim().length <= 1) {
+                      return AppLocalizations.of(context)!.alias_new_validation;
+                    }
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        _searchEmail(false);
+                        _formKey.currentState!.reset();
+                      },
+                      icon: Icon(Icons.clear),
+                    ),
+                  ),
+                ),
+              ),
+              trailing: IconButton(
+                onPressed: () {
+                  _searchEmail(true);
+                },
+                icon: _isLoading
+                    ? const CircularProgressIndicator()
+                    : const Icon(Icons.search),
+              ),
+            ),
+            ListTile(
+              title: Text(AppLocalizations.of(context)!.not_found),
+            )
+          ],
+        );
+      }
       return RefreshIndicator(
           child: ListView(
             children: [
+              ListTile(
+                title: Form(
+                  key: _formKey,
+                  child: TextFormField(
+                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                    onSaved: (value) {
+                      _searchQuery = value!;
+                    },
+                    validator: (value) {
+                      if (value == null ||
+                          value.isEmpty ||
+                          value.trim().length <= 1) {
+                        return AppLocalizations.of(context)!
+                            .alias_new_validation;
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          _searchEmail(false);
+                          _formKey.currentState!.reset();
+                        },
+                        icon: Icon(Icons.clear),
+                      ),
+                    ),
+                  ),
+                ),
+                trailing: IconButton(
+                  onPressed: () {
+                    _searchEmail(true);
+                  },
+                  icon: _isLoading
+                      ? const CircularProgressIndicator()
+                      : const Icon(Icons.search),
+                ),
+              ),
               ListView.builder(
                 physics: const ScrollPhysics(),
                 shrinkWrap: true,
@@ -72,8 +170,14 @@ class _MailAccountsScreensState extends State<MailAccountsScreen> {
             await mailAccountApi.fetchAccountList(context, widget.accountId);
           });
     }
-    return const SizedBox(
-      height: 8,
+    return const Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(),
+        ],
+      ),
     );
   }
 

@@ -123,4 +123,9 @@ class MailAliasApi {
       )));
     }
   }
+
+  Future<List<String>> searchAliasesList(BuildContext context,
+      int mailHostingId, String mailboxName, String searchTerm) async {
+    return aliases;
+  }
 }

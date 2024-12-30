@@ -22,13 +22,21 @@ class MailAccountApi {
   }
 
   Future<List<MailAccountModel>> fetchAccountList(
-      BuildContext context, int mailHostingId) async {
+      BuildContext context, int mailHostingId,
+      [String? search]) async {
     String endpoint =
         "$infomaniakApiBaseUrl/$version/$endpointName/$mailHostingId/$endpointSubName?order_by=mailbox";
 
     try {
       http.Response apiResponse = await http.get(
-        Uri.parse(endpoint),
+        search == null
+            ? Uri.parse(endpoint)
+                .replace(queryParameters: {'order_by': 'mailbox'})
+            : Uri.parse(endpoint).replace(queryParameters: {
+                'search': search,
+                'order_by': 'mailbox',
+                'filter_by': 'mailbox_name'
+              }),
         headers: getHeaders(),
       );
       Map<String, dynamic> response = jsonDecode(apiResponse.body);

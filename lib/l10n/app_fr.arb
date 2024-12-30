@@ -1,6 +1,7 @@
 {
   "@@locale": "fr",
   "cancel": "Annuler",
+  "not_found": "Aucun résultat",
   "start_APIinfo": "Veuillez introduire votre clé API pour démarrer",
   "start_APIconfig": "Pour ainsi faire vous devez vous rendre dans la configuration de l'application en haut à droite",
   "mail_products": "Produits mail",
