@@ -31,7 +31,7 @@ class _MailAliasesScreensState extends State<MailAliasesScreen> {
 
   void _initMailAccounts() async {
     mailAliases = await mailAliasApi.fetchAliasesList(
-        context, widget.mailHostingId, widget.mailAccount.mailboxName!);
+        widget.mailHostingId, widget.mailAccount.mailboxName!);
     setState(() {});
   }
 
@@ -42,7 +42,7 @@ class _MailAliasesScreensState extends State<MailAliasesScreen> {
     });
 
     mailAliases = await mailAliasApi.fetchAliasesList(
-        context, widget.mailHostingId, widget.mailAccount.mailboxName!);
+        widget.mailHostingId, widget.mailAccount.mailboxName!);
 
     mailAliases = mailAliases.where((item) {
       return item.contains(_searchQuery);
@@ -108,17 +108,36 @@ class _MailAliasesScreensState extends State<MailAliasesScreen> {
                       mailAliases[index] =
                           AppLocalizations.of(context)!.api_deleting_alias;
                     });
-                    await mailAliasApi.removeAlias(
-                        context,
+                    try {
+                      bool aliasRemoved = await mailAliasApi.removeAlias(
                         widget.mailHostingId,
                         widget.mailAccount.mailboxName!,
-                        alias);
-                    await mailAliasApi.fetchAliasesList(
-                      context,
-                      widget.mailHostingId,
-                      widget.mailAccount.mailboxName!,
-                    );
-                    setState(() {});
+                        alias,
+                      );
+                      if (aliasRemoved) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              AppLocalizations.of(context)!
+                                  .api_alias_deleted(alias),
+                            ),
+                          ),
+                        );
+                        await mailAliasApi.fetchAliasesList(
+                          widget.mailHostingId,
+                          widget.mailAccount.mailboxName!,
+                        );
+                        setState(() {});
+                      }
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            e.toString(),
+                          ),
+                        ),
+                      );
+                    }
                   },
                   icon: mailAliases[index] ==
                           AppLocalizations.of(context)!.api_deleting_alias
@@ -137,7 +156,6 @@ class _MailAliasesScreensState extends State<MailAliasesScreen> {
         ),
         onRefresh: () async {
           await mailAliasApi.fetchAliasesList(
-            context,
             widget.mailHostingId,
             widget.mailAccount.mailboxName!,
           );
@@ -212,7 +230,6 @@ class _MailAliasesScreensState extends State<MailAliasesScreen> {
                         mailbox: widget.mailAccount,
                       )));
               await mailAliasApi.fetchAliasesList(
-                context,
                 widget.mailHostingId,
                 widget.mailAccount.mailboxName!,
               );

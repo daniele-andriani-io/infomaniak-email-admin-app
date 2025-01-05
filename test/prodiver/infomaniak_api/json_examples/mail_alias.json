@@ -1,0 +1,9 @@
+{
+  "result":"success",
+  "data":{
+    "is_enabled": 1,
+    "aliases":[
+      "example"
+    ]
+  }
+}

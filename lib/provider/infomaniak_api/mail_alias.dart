@@ -15,51 +15,69 @@ class MailAliasApi extends InfomaniakApi {
   String endpointSubName = "mailboxes";
   String endpointSubSubName = "aliases";
 
-  Future<List<String>> fetchAliasesList(
-      BuildContext context, int mailHostingId, String mailboxName) async {
-    String endpoint =
-        "$infomaniakApiBaseUrl/$version/$endpointName/$mailHostingId/$endpointSubName/$mailboxName/$endpointSubSubName";
+  Uri getEndpoint(
+    int mailHostingId,
+    String mailboxName, {
+    String? aliasToDelete,
+  }) {
+    if (aliasToDelete != null && aliasToDelete.isNotEmpty) {
+      return Uri.https(
+        infomaniakApiBaseUrl,
+        "/$version/$endpointName/$mailHostingId/$endpointSubName/$mailboxName/$endpointSubSubName/$aliasToDelete",
+      );
+    }
+    return Uri.https(
+      infomaniakApiBaseUrl,
+      "/$version/$endpointName/$mailHostingId/$endpointSubName/$mailboxName/$endpointSubSubName",
+    );
+  }
 
+  Future<List<String>> fetchAliasesList(
+    int mailHostingId,
+    String mailboxName, {
+    http.Client? client,
+  }) async {
+    client = client ?? http.Client();
     try {
-      http.Response apiResponse = await http.get(
-        Uri.parse(endpoint),
+      http.Response apiResponse = await client.get(
+        getEndpoint(mailHostingId, mailboxName),
         headers: getHeaders(),
       );
       Map<String, dynamic> response = jsonDecode(apiResponse.body);
 
       if (apiResponse.statusCode == 200 && response['result'] == "success") {
-        aliases.removeRange(0, aliases.length);
+        aliases = [];
         for (var alias in response['data']['aliases']) {
           aliases.add(alias);
         }
-      } else {
-        if (response.containsKey('error')) {
-          String message = response['error']['description'];
-          int code = apiResponse.statusCode;
-          throw Exception("$message ($code)");
-        }
-        throw Exception(AppLocalizations.of(context)!.api_call_failed!);
+        aliases.sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+        return aliases;
+      } else if (response.containsKey('error')) {
+        String message = response['error']['description'];
+        int code = apiResponse.statusCode;
+        throw Exception("$message ($code)");
       }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(
-        e.toString(),
-      )));
+    } on FormatException catch (e) {
+      throw Exception("Something went wrong");
+    } on Exception catch (e) {
+      rethrow;
     }
-    aliases.sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
     return aliases;
   }
 
-  Future<void> createAlias(BuildContext context, int mailHostingId,
-      String mailboxName, String newAlias) async {
-    String endpoint =
-        "$infomaniakApiBaseUrl/$version/$endpointName/$mailHostingId/$endpointSubName/$mailboxName/$endpointSubSubName";
-
+  Future<bool> createAlias(
+    int mailHostingId,
+    String mailboxName,
+    String newAlias, {
+    http.Client? client,
+  }) async {
+    client = client ?? http.Client();
     final Map<String, String> data = <String, String>{};
     data['alias'] = newAlias;
+
     try {
-      http.Response apiResponse = await http.post(
-        Uri.parse(endpoint),
+      http.Response apiResponse = await client.post(
+        getEndpoint(mailHostingId, mailboxName),
         headers: getHeaders(),
         body: data,
       );
@@ -67,59 +85,47 @@ class MailAliasApi extends InfomaniakApi {
       Map<String, dynamic> response = jsonDecode(apiResponse.body);
 
       if (apiResponse.statusCode == 200 && response['result'] == "success") {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(AppLocalizations.of(context)!.api_new_alias_added)));
-      } else {
-        if (response.containsKey('error')) {
-          String message = response['error']['description'];
-          int code = apiResponse.statusCode;
-          throw Exception("$message ($code)");
-        }
-        throw Exception(AppLocalizations.of(context)!.api_call_failed!);
+        return true;
+      } else if (response.containsKey('error')) {
+        String message = response['error']['description'];
+        int code = apiResponse.statusCode;
+        throw Exception("$message ($code)");
       }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(
-        e.toString(),
-      )));
+    } on FormatException catch (e) {
+      throw Exception("Something went wrong");
+    } on Exception catch (e) {
+      rethrow;
     }
+    return false;
   }
 
-  Future<void> removeAlias(BuildContext context, int mailHostingId,
-      String mailboxName, String alias) async {
-    String endpoint =
-        "$infomaniakApiBaseUrl/$version/$endpointName/$mailHostingId/$endpointSubName/$mailboxName/$endpointSubSubName/$alias";
-
+  Future<bool> removeAlias(
+    int mailHostingId,
+    String mailboxName,
+    String alias, {
+    http.Client? client,
+  }) async {
+    client = client ?? http.Client();
     try {
-      http.Response apiResponse = await http.delete(
-        Uri.parse(endpoint),
+      http.Response apiResponse = await client.delete(
+        getEndpoint(mailHostingId, mailboxName, aliasToDelete: alias),
         headers: getHeaders(),
       );
 
       Map<String, dynamic> response = jsonDecode(apiResponse.body);
 
       if (apiResponse.statusCode == 200 && response['result'] == "success") {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content:
-                Text(AppLocalizations.of(context)!.api_alias_deleted(alias))));
-      } else {
-        if (response.containsKey('error')) {
-          String message = response['error']['description'];
-          int code = apiResponse.statusCode;
-          throw Exception("$message ($code)");
-        }
-        throw Exception(AppLocalizations.of(context)!.api_call_failed!);
+        return true;
+      } else if (response.containsKey('error')) {
+        String message = response['error']['description'];
+        int code = apiResponse.statusCode;
+        throw Exception("$message ($code)");
       }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(
-        e.toString(),
-      )));
+    } on FormatException catch (e) {
+      throw Exception("Something went wrong");
+    } on Exception catch (e) {
+      rethrow;
     }
-  }
-
-  Future<List<String>> searchAliasesList(BuildContext context,
-      int mailHostingId, String mailboxName, String searchTerm) async {
-    return aliases;
+    return false;
   }
 }

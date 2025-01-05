@@ -28,12 +28,24 @@ class _AddMailAliasesScreensState extends State<AddMailAliasesScreen> {
       setState(() {
         _isLoading = true;
       });
-      await mailAliasApi.createAlias(context, widget.mailHostingId,
-          widget.mailbox.mailboxName!, _newAlias);
-      setState(() {
-        _isLoading = false;
-        Navigator.of(context).pop();
-      });
+      try {
+        bool aliasCreated = await mailAliasApi.createAlias(
+            widget.mailHostingId, widget.mailbox.mailboxName!, _newAlias);
+        if (aliasCreated) {
+          setState(() {
+            _isLoading = false;
+            Navigator.of(context).pop();
+          });
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              e.toString(),
+            ),
+          ),
+        );
+      }
     }
   }
 
