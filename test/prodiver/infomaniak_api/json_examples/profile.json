@@ -1,0 +1,37 @@
+{
+  "result":"success",
+  "data":
+  {
+    "id":26502,
+    "display_name":"example",
+    "first_name":"Norene",
+    "last_name":"Greenholt",
+    "email":"freeda.bauch@abernathy.com",
+    "avatar":"example",
+    "login":"example",
+    "preferences": {
+      "account": {
+        "current_account_id": 26502,
+        "last_login_at": 1735556247
+      },
+      "language": {
+        "id": 1,
+        "name": "French",
+        "short_name": "F",
+        "locale": "fr_FR",
+        "short_locale": "fr"
+      },
+      "country": {
+        "id": 203,
+        "name": "SWITZERLAND",
+        "short_name": "CH",
+        "is_enabled": true
+      },
+      "timezone": {
+        "id": 414,
+        "name": "Europe/Zurich",
+        "gmt": "01:00"
+      }
+    }
+  }
+}

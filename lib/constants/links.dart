@@ -1,1 +1,1 @@
-const String infomaniakApiBaseUrl = "https://api.infomaniak.com";
+const String infomaniakApiBaseUrl = "api.infomaniak.com";

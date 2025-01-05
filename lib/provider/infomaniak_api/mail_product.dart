@@ -5,28 +5,29 @@ import 'package:flutter/material.dart';
 import 'package:infomaniak_email_admin_app/constants/links.dart';
 import 'package:http/http.dart' as http;
 import 'package:infomaniak_email_admin_app/models/infomaniak/mail_product.dart';
-import 'package:infomaniak_email_admin_app/provider/api_key.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:infomaniak_email_admin_app/provider/infomaniak_api/abstract.dart';
 
-class MailProductApi {
+class MailProductApi extends InfomaniakApi {
   List<MailProductModel> products = [];
   String version = "1";
   String endpointName = "mail_hostings";
 
-  Map<String, String> getHeaders() {
-    final Map<String, String> headers = <String, String>{};
-    String apiKey = apiKeyProvider.getKey() ?? "";
-    headers['Authorization'] = "Bearer $apiKey";
-    return headers;
+  Uri getEndpoint() {
+    return Uri.https(
+      infomaniakApiBaseUrl,
+      '/$version/$endpointName',
+      {'order_by': 'customer_name'},
+    );
   }
 
-  Future<List<MailProductModel>> fetchProductList(BuildContext context) async {
-    String endpoint =
-        "$infomaniakApiBaseUrl/$version/$endpointName?order_by=customer_name";
-
+  Future<List<MailProductModel>> fetchProductList({
+    http.Client? client,
+  }) async {
+    client = client ?? http.Client();
     try {
-      http.Response apiResponse = await http.get(
-        Uri.parse(endpoint),
+      http.Response apiResponse = await client.get(
+        getEndpoint(),
         headers: getHeaders(),
       );
       Map<String, dynamic> response = jsonDecode(apiResponse.body);
@@ -36,19 +37,15 @@ class MailProductApi {
         for (var account in response['data']) {
           products.add(MailProductModel.fromJson(account));
         }
-      } else {
-        if (response.containsKey('error')) {
-          String message = response['error']['description'];
-          int code = apiResponse.statusCode;
-          throw Exception("$message ($code)");
-        }
-        throw Exception(AppLocalizations.of(context)!.api_call_failed!);
+      } else if (response.containsKey('error')) {
+        String message = response['error']['description'];
+        int code = apiResponse.statusCode;
+        throw Exception("$message ($code)");
       }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(
-        e.toString(),
-      )));
+    } on FormatException catch (e) {
+      throw Exception("Something went wrong");
+    } on Exception catch (e) {
+      rethrow;
     }
     return products;
   }

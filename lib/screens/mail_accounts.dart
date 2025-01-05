@@ -26,17 +26,11 @@ class _MailAccountsScreensState extends State<MailAccountsScreen> {
 
   @override
   void initState() {
-    _initMailAccounts();
+    _searchEmail(false, context);
     super.initState();
   }
 
-  void _initMailAccounts() async {
-    mailAccounts =
-        await mailAccountApi.fetchAccountList(context, widget.account.id!);
-    setState(() {});
-  }
-
-  void _searchEmail(bool isFiltered) async {
+  void _searchEmail(bool isFiltered, BuildContext context) async {
     _formKey.currentState!.save();
     setState(() {
       _isLoading = true;
@@ -46,11 +40,26 @@ class _MailAccountsScreensState extends State<MailAccountsScreen> {
     if (!_isFiltered) {
       _searchQuery = '';
     }
-
-    mailAccounts = _searchQuery.length == 0
-        ? await mailAccountApi.fetchAccountList(context, widget.account.id!)
-        : await mailAccountApi.fetchAccountList(
-            context, widget.account.id!, _searchQuery);
+    try {
+      mailAccounts = _searchQuery.length == 0
+          ? await mailAccountApi.fetchAccountList(widget.account.id!)
+          : await mailAccountApi.fetchAccountList(widget.account.id!,
+              search: _searchQuery);
+    } on bool catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.api_call_failed!),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            e.toString(),
+          ),
+        ),
+      );
+    }
 
     setState(() {
       _isLoading = false;
@@ -80,11 +89,30 @@ class _MailAccountsScreensState extends State<MailAccountsScreen> {
             ),
             TextButton(
               onPressed: () async {
-                await mailAccountApi.deleteAccount(context, widget.account.id!,
-                    mailAccounts[index].mailboxName!);
-                _searchEmail(true);
-                Navigator.pop(context);
-                setState(() {});
+                try {
+                  bool wasDeleted = await mailAccountApi.deleteAccount(
+                      widget.account.id!, mailAccounts[index].mailboxName!);
+                  if (wasDeleted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(AppLocalizations.of(context)!
+                            .api_account_removed(
+                                mailAccounts[index].mailboxName!)),
+                      ),
+                    );
+                    _searchEmail(true, context);
+                    Navigator.pop(context);
+                    setState(() {});
+                  }
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        e.toString(),
+                      ),
+                    ),
+                  );
+                }
               },
               child: Text(AppLocalizations.of(context)!.account_delete_confirm),
             ),
@@ -120,7 +148,7 @@ class _MailAccountsScreensState extends State<MailAccountsScreen> {
                   decoration: InputDecoration(
                     suffixIcon: IconButton(
                       onPressed: () {
-                        _searchEmail(false);
+                        _searchEmail(false, context);
                         _formKey.currentState!.reset();
                       },
                       icon: Icon(Icons.clear),
@@ -130,7 +158,7 @@ class _MailAccountsScreensState extends State<MailAccountsScreen> {
               ),
               trailing: IconButton(
                 onPressed: () {
-                  _searchEmail(true);
+                  _searchEmail(true, context);
                 },
                 icon: _isLoading
                     ? const CircularProgressIndicator()
@@ -168,7 +196,7 @@ class _MailAccountsScreensState extends State<MailAccountsScreen> {
                     decoration: InputDecoration(
                       suffixIcon: IconButton(
                         onPressed: () {
-                          _searchEmail(false);
+                          _searchEmail(false, context);
                           _formKey.currentState!.reset();
                         },
                         icon: Icon(Icons.clear),
@@ -178,7 +206,7 @@ class _MailAccountsScreensState extends State<MailAccountsScreen> {
                 ),
                 trailing: IconButton(
                   onPressed: () {
-                    _searchEmail(true);
+                    _searchEmail(true, context);
                   },
                   icon: _isLoading
                       ? const CircularProgressIndicator()
@@ -212,7 +240,7 @@ class _MailAccountsScreensState extends State<MailAccountsScreen> {
             ],
           ),
           onRefresh: () async {
-            await mailAccountApi.fetchAccountList(context, widget.account.id!);
+            await mailAccountApi.fetchAccountList(widget.account.id!);
             setState(() {});
           });
     }
@@ -239,8 +267,7 @@ class _MailAccountsScreensState extends State<MailAccountsScreen> {
                   builder: (ctx) => AddMailAccountScreen(
                         mailProduct: widget.account,
                       )));
-              await mailAccountApi.fetchAccountList(
-                  context, widget.account.id!);
+              await mailAccountApi.fetchAccountList(widget.account.id!);
               setState(() {});
             },
             icon: const Icon(Icons.add),

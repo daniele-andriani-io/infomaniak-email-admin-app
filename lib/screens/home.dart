@@ -30,8 +30,18 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _initMailAccounts() async {
-    mailProducts = await mailProductApi.fetchProductList(context);
-    setState(() {});
+    try {
+      mailProducts = await mailProductApi.fetchProductList();
+      setState(() {});
+    } on bool catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(AppLocalizations.of(context)!.api_call_failed!)));
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+        e.toString(),
+      )));
+    }
   }
 
   Widget getBody() {
@@ -57,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
           onRefresh: () async {
-            await mailProductApi.fetchProductList(context);
+            _initMailAccounts();
           });
     }
 

@@ -6,20 +6,14 @@ import 'package:infomaniak_email_admin_app/constants/links.dart';
 import 'package:http/http.dart' as http;
 import 'package:infomaniak_email_admin_app/provider/api_key.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:infomaniak_email_admin_app/provider/infomaniak_api/abstract.dart';
 
-class MailAliasApi {
+class MailAliasApi extends InfomaniakApi {
   List<String> aliases = [];
   String version = "1";
   String endpointName = "mail_hostings";
   String endpointSubName = "mailboxes";
   String endpointSubSubName = "aliases";
-
-  Map<String, String> getHeaders() {
-    final Map<String, String> headers = <String, String>{};
-    String apiKey = apiKeyProvider.getKey() ?? "";
-    headers['Authorization'] = "Bearer $apiKey";
-    return headers;
-  }
 
   Future<List<String>> fetchAliasesList(
       BuildContext context, int mailHostingId, String mailboxName) async {

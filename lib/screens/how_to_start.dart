@@ -41,32 +41,42 @@ class _HowToStartScreenState extends State<HowToStartScreen> {
       setState(() {
         _isTesting = true;
       });
-      ProfileModel? tempProfil =
-          await profileApi.fetchProfile(context, _enteredAPIKey);
-      setState(() {
-        String message = "Something went wrong try again";
-        IconData icon = Icons.error;
-        if (tempProfil != null) {
-          message =
-              "The API key you tested is linked to ${tempProfil.displayName}";
-          icon = Icons.check;
-          if (andSave) {
-            infomaniakAccountIdProvider
-                .changeAccountId(tempProfil.currentAccountId!);
+      try {
+        ProfileModel? tempProfile =
+            await profileApi.fetchProfile(_enteredAPIKey);
+        setState(() {
+          String message = "Something went wrong try again";
+          IconData icon = Icons.error;
+          if (tempProfile != null) {
+            message =
+                "The API key you tested is linked to ${tempProfile.displayName}";
+            icon = Icons.check;
+            if (andSave) {
+              infomaniakAccountIdProvider
+                  .changeAccountId(tempProfile.currentAccountId!);
+            }
           }
-        }
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Row(
+            children: [
+              Text(message),
+              const SizedBox(
+                width: 8,
+              ),
+              Icon(icon),
+            ],
+          )));
+          _isTesting = false;
+        });
+      } on bool catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Row(
-          children: [
-            Text(message),
-            const SizedBox(
-              width: 8,
-            ),
-            Icon(icon),
-          ],
+            content: Text(AppLocalizations.of(context)!.api_call_failed!)));
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+          e.toString(),
         )));
-        _isTesting = false;
-      });
+      }
     }
   }
 

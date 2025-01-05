@@ -1,0 +1,57 @@
+{
+  "result":"success",
+  "data":[
+    {
+      "id":70128,
+      "account_id":15595,
+      "service_id":65125,
+      "service_name":"example",
+      "customer_name":"example",
+      "internal_name":"example",
+      "created_at":1735326796,
+      "expired_at":1735363321,
+      "has_maintenance":false,
+      "is_locked":true,
+      "unique_id":13531,
+      "description":"Fuga delectus assumenda velit velit velit nesciunt.",
+      "is_free":true,
+      "is_zero_price":true,
+      "rights":{
+        "technical":false,
+        "statistic":false,
+        "check":true,
+        "sale":false
+      },
+      "has_operation_in_progress":false,
+      "main_fqdn":"example",
+      "main_fqdn_idn":"example",
+      "bill_reference":"example",
+      "bill_periodicity":15470,
+      "quota":9194,
+      "used":40093,
+      "total":9130,
+      "diagnostic_dns":{
+        "has_error":false
+      },
+      "pack":{
+        "id":43075,
+        "description":"Ea voluptas dolor temporibus numquam.",
+        "is_starter":true,
+        "has_list_tool":false,
+        "has_newsletter_tool":false,
+        "additional_paid_email":62727,
+        "free_additional_email":53395
+      },
+      "limit":{
+        "alias_for_fqdn":false,
+        "alias_for_fqdn_default":false,
+        "alias_for_mailbox":false,
+        "alias_for_mailbox_default":false
+      }
+    }
+  ],
+  "total":221,
+  "page":2,
+  "pages":15,
+  "items_per_page":15
+}

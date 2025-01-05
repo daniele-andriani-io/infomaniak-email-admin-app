@@ -5,34 +5,44 @@ import 'package:flutter/material.dart';
 import 'package:infomaniak_email_admin_app/constants/links.dart';
 import 'package:http/http.dart' as http;
 import 'package:infomaniak_email_admin_app/models/infomaniak/mail_account.dart';
-import 'package:infomaniak_email_admin_app/provider/api_key.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:infomaniak_email_admin_app/provider/infomaniak_api/abstract.dart';
 
-class MailAccountApi {
+class MailAccountApi extends InfomaniakApi {
   List<MailAccountModel> accounts = [];
   String version = "1";
   String endpointName = "mail_hostings";
   String endpointSubName = "mailboxes";
 
-  Map<String, String> getHeaders() {
-    final Map<String, String> headers = <String, String>{};
-    String apiKey = apiKeyProvider.getKey() ?? "";
-    headers['Authorization'] = "Bearer $apiKey";
-    return headers;
+  Uri getEndpoint(int mailHostingId,
+      {bool? deleteEndpoint, String? accountName}) {
+    if (deleteEndpoint != null &&
+        deleteEndpoint &&
+        accountName != null &&
+        accountName.isNotEmpty) {
+      return Uri.https(
+        infomaniakApiBaseUrl,
+        '/$version/$endpointName/$mailHostingId/$endpointSubName/$accountName',
+      );
+    }
+    return Uri.https(
+      infomaniakApiBaseUrl,
+      '/$version/$endpointName/$mailHostingId/$endpointSubName',
+      {'order_by': 'mailbox'},
+    );
   }
 
   Future<List<MailAccountModel>> fetchAccountList(
-      BuildContext context, int mailHostingId,
-      [String? search]) async {
-    String endpoint =
-        "$infomaniakApiBaseUrl/$version/$endpointName/$mailHostingId/$endpointSubName";
-
+    int mailHostingId, {
+    http.Client? client,
+    String? search,
+  }) async {
+    client = client ?? http.Client();
     try {
-      http.Response apiResponse = await http.get(
+      http.Response apiResponse = await client.get(
         search == null
-            ? Uri.parse(endpoint)
-                .replace(queryParameters: {'order_by': 'mailbox'})
-            : Uri.parse(endpoint).replace(queryParameters: {
+            ? getEndpoint(mailHostingId)
+            : getEndpoint(mailHostingId).replace(queryParameters: {
                 'search': search,
                 'order_by': 'mailbox',
                 'filter_by': 'mailbox_name'
@@ -46,35 +56,34 @@ class MailAccountApi {
         for (var account in response['data']) {
           accounts.add(MailAccountModel.fromJson(account));
         }
-      } else {
-        if (response.containsKey('error')) {
-          String message = response['error']['description'];
-          int code = apiResponse.statusCode;
-          throw Exception("$message ($code)");
-        }
-        throw Exception(AppLocalizations.of(context)!.api_call_failed!);
+      } else if (response.containsKey('error')) {
+        String message = response['error']['description'];
+        int code = apiResponse.statusCode;
+        throw Exception("$message ($code)");
       }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(
-        e.toString(),
-      )));
+    } on FormatException catch (e) {
+      throw Exception("Something went wrong");
+    } on Exception catch (e) {
+      rethrow;
     }
     return accounts;
   }
 
-  Future<void> createAccount(BuildContext context, int mailHostingId,
-      String accountName, String accountPassword) async {
-    String endpoint =
-        "$infomaniakApiBaseUrl/$version/$endpointName/$mailHostingId/$endpointSubName";
+  Future<bool> createAccount(
+    int mailHostingId,
+    String accountName,
+    String accountPassword, {
+    http.Client? client,
+  }) async {
+    client = client ?? http.Client();
 
     final Map<String, String> data = <String, String>{};
     data['mailbox_name'] = accountName;
     data['password'] = accountPassword;
 
     try {
-      http.Response apiResponse = await http.post(
-        Uri.parse(endpoint),
+      http.Response apiResponse = await client.post(
+        getEndpoint(mailHostingId),
         headers: getHeaders(),
         body: data,
       );
@@ -82,55 +91,47 @@ class MailAccountApi {
       Map<String, dynamic> response = jsonDecode(apiResponse.body);
 
       if (apiResponse.statusCode == 201 && response['result'] == "success") {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content:
-                Text(AppLocalizations.of(context)!.api_new_account_added)));
-      } else {
-        if (response.containsKey('error')) {
-          String message = response['error']['description'];
-          int code = apiResponse.statusCode;
-          throw Exception("$message ($code)");
-        }
-        throw Exception(AppLocalizations.of(context)!.api_call_failed!);
+        return true;
+      } else if (response.containsKey('error')) {
+        String message = response['error']['description'];
+        int code = apiResponse.statusCode;
+        throw Exception("$message ($code)");
       }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(
-        e.toString(),
-      )));
+    } on FormatException catch (e) {
+      throw Exception("Something went wrong");
+    } on Exception catch (e) {
+      rethrow;
     }
+    return false;
   }
 
-  Future<void> deleteAccount(
-      BuildContext context, int mailHostingId, String accountName) async {
-    String endpoint =
-        "$infomaniakApiBaseUrl/$version/$endpointName/$mailHostingId/$endpointSubName/$accountName";
-
+  Future<bool> deleteAccount(
+    int mailHostingId,
+    String accountName, {
+    http.Client? client,
+  }) async {
+    client = client ?? http.Client();
     try {
-      http.Response apiResponse = await http.delete(
-        Uri.parse(endpoint),
+      http.Response apiResponse = await client.delete(
+        getEndpoint(mailHostingId,
+            deleteEndpoint: true, accountName: accountName),
         headers: getHeaders(),
       );
 
       Map<String, dynamic> response = jsonDecode(apiResponse.body);
 
       if (apiResponse.statusCode == 200 && response['result'] == "success") {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(AppLocalizations.of(context)!
-                .api_account_removed(accountName))));
-      } else {
-        if (response.containsKey('error')) {
-          String message = response['error']['description'];
-          int code = apiResponse.statusCode;
-          throw Exception("$message ($code)");
-        }
-        throw Exception(AppLocalizations.of(context)!.api_call_failed!);
+        return true;
+      } else if (response.containsKey('error')) {
+        String message = response['error']['description'];
+        int code = apiResponse.statusCode;
+        throw Exception("$message ($code)");
       }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(
-        e.toString(),
-      )));
+    } on FormatException catch (e) {
+      throw Exception("Something went wrong");
+    } on Exception catch (e) {
+      rethrow;
     }
+    return false;
   }
 }

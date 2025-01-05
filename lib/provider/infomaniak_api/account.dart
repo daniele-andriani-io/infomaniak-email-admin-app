@@ -7,18 +7,12 @@ import 'package:infomaniak_email_admin_app/models/infomaniak/account.dart';
 import 'package:http/http.dart' as http;
 import 'package:infomaniak_email_admin_app/provider/api_key.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:infomaniak_email_admin_app/provider/infomaniak_api/abstract.dart';
 
-class AccountApi {
+class AccountApi extends InfomaniakApi {
   List<AccountModel> accounts = [];
   String version = "1";
   String endpointName = "accounts";
-
-  Map<String, String> getHeaders() {
-    final Map<String, String> headers = <String, String>{};
-    String apiKey = apiKeyProvider.getKey() ?? "";
-    headers['Authorization'] = "Bearer $apiKey";
-    return headers;
-  }
 
   Future<List<AccountModel>> fetchAccountList(context) async {
     String endpoint = "$infomaniakApiBaseUrl/$version/$endpointName";

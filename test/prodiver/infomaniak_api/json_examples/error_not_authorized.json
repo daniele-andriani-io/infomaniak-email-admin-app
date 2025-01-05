@@ -1,0 +1,7 @@
+{
+  "result": "error",
+  "error": {
+    "code": "not_authorized",
+    "description": "Authorization required"
+  }
+}

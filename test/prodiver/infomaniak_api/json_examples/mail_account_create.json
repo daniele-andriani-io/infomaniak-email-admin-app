@@ -1,0 +1,14 @@
+{
+  "result":"success",
+  "data":{
+    "mailbox":{
+      "mailbox_name":"user",
+      "mailbox_idn":"user@êxample.com",
+      "is_limited":true,
+      "is_free_mail":false
+    },
+    "quota":29597,
+    "used":44085,
+    "total":97247
+  }
+}

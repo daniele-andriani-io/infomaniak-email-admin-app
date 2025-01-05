@@ -31,12 +31,35 @@ class _AddMailAccountScreensState extends State<AddMailAccountScreen> {
       setState(() {
         _isLoading = true;
       });
-      await mailAccountApi.createAccount(
-          context, widget.mailProduct.id!, _newAccount, _newPassword);
-      setState(() {
-        _isLoading = false;
-        Navigator.of(context).pop();
-      });
+
+      try {
+        bool wasCreated = await mailAccountApi.createAccount(
+          widget.mailProduct.id!,
+          _newAccount,
+          _newPassword,
+        );
+
+        if (wasCreated) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content:
+                  Text(AppLocalizations.of(context)!.api_new_account_added),
+            ),
+          );
+          setState(() {
+            _isLoading = false;
+            Navigator.of(context).pop();
+          });
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              e.toString(),
+            ),
+          ),
+        );
+      }
     }
   }
 

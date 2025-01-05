@@ -1,0 +1,16 @@
+{
+  "result":"success",
+  "data":[
+    {
+      "mailbox_name":"user",
+      "mailbox":"user@xn--xample-hva.com",
+      "mailbox_idn":"user@êxample.com",
+      "is_limited":true,
+      "is_free_mail":true
+    }
+  ],
+  "total":221,
+  "page":2,
+  "pages":15,
+  "items_per_page":15
+}

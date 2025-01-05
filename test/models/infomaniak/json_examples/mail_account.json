@@ -1,0 +1,7 @@
+{
+  "mailbox_name":"user",
+  "mailbox":"user@xn--xample-hva.com",
+  "mailbox_idn":"user@êxample.com",
+  "is_limited":false,
+  "is_free_mail":true
+}

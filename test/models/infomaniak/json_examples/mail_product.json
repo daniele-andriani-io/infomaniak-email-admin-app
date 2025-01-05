@@ -1,0 +1,48 @@
+{
+  "id":98530,
+  "account_id":18547,
+  "service_id":24355,
+  "service_name":"example",
+  "customer_name":"example",
+  "internal_name":"example",
+  "created_at":1735859914,
+  "expired_at":1735833266,
+  "has_maintenance":false,
+  "is_locked":false,
+  "unique_id":22600,
+  "description":"Tempora dicta itaque corporis ea molestiae.",
+  "is_free":true,
+  "is_zero_price":false,
+  "rights":{
+    "technical":false,
+    "statistic":true,
+    "check":true,
+    "sale":false
+  },
+  "has_operation_in_progress":true,
+  "main_fqdn":"example",
+  "main_fqdn_idn":"example",
+  "bill_reference":"example",
+  "bill_periodicity":37564,
+  "quota":59889,
+  "used":89139,
+  "total":96313,
+  "diagnostic_dns":{
+    "has_error":true
+  },
+  "pack":{
+    "id":98390,
+    "description":"Ratione eius corrupti ipsam dolorum quos eos quibusdam voluptatibus.",
+    "is_starter":false,
+    "has_list_tool":true,
+    "has_newsletter_tool":true,
+    "additional_paid_email":8882,
+    "free_additional_email":86838
+  },
+  "limit":{
+    "alias_for_fqdn":true,
+    "alias_for_fqdn_default":false,
+    "alias_for_mailbox":false,
+    "alias_for_mailbox_default":false
+  }
+}
