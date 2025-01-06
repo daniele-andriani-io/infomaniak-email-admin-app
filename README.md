@@ -8,7 +8,8 @@ Infomaniak ecosystem.
 * give the option to add a description to an alias to know for which service/website it has been used
 * create AdSense account
 * add email usage counter
-* add tests
+* add widget tests?
+* add integration tests?
 * refactor
 * in-app purchase for a bigger help
 * tablet version of the application

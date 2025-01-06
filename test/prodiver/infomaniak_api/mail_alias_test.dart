@@ -14,7 +14,7 @@ import 'package:http/http.dart' as http;
 import 'package:mockito/mockito.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'profile.mocks.dart';
+import 'profile_test.mocks.dart';
 
 Future<String> fetchExample() async {
   File file =
@@ -44,7 +44,6 @@ const int TEST_MAIL_HOSTING_ID = 1;
 const String TEST_MAILBOX_NAME = 'test';
 const String TEST_ALIAS = 'hello';
 
-@GenerateMocks([http.Client])
 void main() {
   setUpAll(() async {
     SharedPreferences.setMockInitialValues({});
@@ -123,14 +122,16 @@ void main() {
       test('create successfully', () async {
         final client = MockClient();
 
-        when(client.post(
-                MailAliasApi().getEndpoint(
-                  TEST_MAIL_HOSTING_ID,
-                  TEST_MAILBOX_NAME,
-                ),
-                headers: MailAliasApi().getHeaders(),
-                body: {"alias": TEST_ALIAS}))
-            .thenAnswer((_) async => http.Response(await createExample(), 200));
+        when(
+          client.post(
+            MailAliasApi().getEndpoint(
+              TEST_MAIL_HOSTING_ID,
+              TEST_MAILBOX_NAME,
+            ),
+            headers: MailAliasApi().getHeaders(),
+            body: {"alias": TEST_ALIAS},
+          ),
+        ).thenAnswer((_) async => http.Response(await createExample(), 200));
 
         bool wasCreated = await MailAliasApi().createAlias(
           TEST_MAIL_HOSTING_ID,

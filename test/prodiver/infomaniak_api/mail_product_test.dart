@@ -11,7 +11,7 @@ import 'package:http/http.dart' as http;
 import 'package:mockito/mockito.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'profile.mocks.dart';
+import 'profile_test.mocks.dart';
 
 Future<String> returnExample() async {
   File file =
@@ -25,7 +25,6 @@ Future<String> returnError() async {
   return await file.readAsString();
 }
 
-@GenerateMocks([http.Client])
 void main() {
   setUpAll(() async {
     SharedPreferences.setMockInitialValues({});

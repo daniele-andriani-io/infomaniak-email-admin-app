@@ -2,18 +2,14 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:infomaniak_email_admin_app/models/infomaniak/mail_account.dart';
-import 'package:infomaniak_email_admin_app/models/infomaniak/mail_product.dart';
-import 'package:infomaniak_email_admin_app/models/infomaniak/profile.dart';
 import 'package:infomaniak_email_admin_app/provider/api_key.dart';
 import 'package:infomaniak_email_admin_app/provider/infomaniak_api/mail_account.dart';
-import 'package:infomaniak_email_admin_app/provider/infomaniak_api/mail_product.dart';
-import 'package:infomaniak_email_admin_app/provider/infomaniak_api/profile.dart';
 import 'package:mockito/annotations.dart';
 import 'package:http/http.dart' as http;
 import 'package:mockito/mockito.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'profile.mocks.dart';
+import 'profile_test.mocks.dart';
 
 Future<String> fetchExample() async {
   File file =
@@ -40,8 +36,9 @@ Future<String> returnError() async {
 }
 
 const int TEST_MAIL_HOSTING_ID = 1;
+const String TEST_MAILBOX_NAME = 'test';
+const String TEST_PWD = 'hello';
 
-@GenerateMocks([http.Client])
 void main() {
   setUpAll(() async {
     SharedPreferences.setMockInitialValues({});
@@ -98,12 +95,16 @@ void main() {
       test('create successfully', () async {
         final client = MockClient();
 
-        when(client.post(MailAccountApi().getEndpoint(TEST_MAIL_HOSTING_ID),
-                headers: MailAccountApi().getHeaders()))
-            .thenAnswer((_) async => http.Response(await createExample(), 201));
+        when(
+          client.post(
+            MailAccountApi().getEndpoint(TEST_MAIL_HOSTING_ID),
+            headers: MailAccountApi().getHeaders(),
+            body: {'mailbox_name': TEST_MAILBOX_NAME, 'password': TEST_PWD},
+          ),
+        ).thenAnswer((_) async => http.Response(await createExample(), 201));
 
         bool wasCreated = await MailAccountApi().createAccount(
-            TEST_MAIL_HOSTING_ID, 'accountName', 'accountPWD',
+            TEST_MAIL_HOSTING_ID, TEST_MAILBOX_NAME, TEST_PWD,
             client: client);
 
         expect(wasCreated, true);
@@ -112,13 +113,17 @@ void main() {
       test('create with 404 error', () async {
         final client = MockClient();
 
-        when(client.post(MailAccountApi().getEndpoint(TEST_MAIL_HOSTING_ID),
-                headers: MailAccountApi().getHeaders()))
-            .thenAnswer((_) async => http.Response('Not found', 404));
+        when(
+          client.post(
+            MailAccountApi().getEndpoint(TEST_MAIL_HOSTING_ID),
+            headers: MailAccountApi().getHeaders(),
+            body: {'mailbox_name': TEST_MAILBOX_NAME, 'password': TEST_PWD},
+          ),
+        ).thenAnswer((_) async => http.Response('Not found', 404));
 
         try {
           bool wasCreated = await MailAccountApi().createAccount(
-              TEST_MAIL_HOSTING_ID, 'accountName', 'accountPWD',
+              TEST_MAIL_HOSTING_ID, TEST_MAILBOX_NAME, TEST_PWD,
               client: client);
           expect(wasCreated, false);
         } catch (e) {
@@ -129,13 +134,17 @@ void main() {
       test('create not authorized', () async {
         final client = MockClient();
 
-        when(client.post(MailAccountApi().getEndpoint(TEST_MAIL_HOSTING_ID),
-                headers: MailAccountApi().getHeaders()))
-            .thenAnswer((_) async => http.Response(await returnError(), 401));
+        when(
+          client.post(
+            MailAccountApi().getEndpoint(TEST_MAIL_HOSTING_ID),
+            headers: MailAccountApi().getHeaders(),
+            body: {'mailbox_name': TEST_MAILBOX_NAME, 'password': TEST_PWD},
+          ),
+        ).thenAnswer((_) async => http.Response(await returnError(), 401));
 
         try {
           bool wasCreated = await MailAccountApi().createAccount(
-              TEST_MAIL_HOSTING_ID, 'accountName', 'accountPWD',
+              TEST_MAIL_HOSTING_ID, TEST_MAILBOX_NAME, TEST_PWD,
               client: client);
           expect(wasCreated, false);
         } catch (e) {

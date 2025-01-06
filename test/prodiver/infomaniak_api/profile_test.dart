@@ -7,7 +7,7 @@ import 'package:mockito/annotations.dart';
 import 'package:http/http.dart' as http;
 import 'package:mockito/mockito.dart';
 
-import 'profile.mocks.dart';
+import 'profile_test.mocks.dart';
 
 Future<String> returnExample() async {
   File file = File('test/prodiver/infomaniak_api/json_examples/profile.json');
