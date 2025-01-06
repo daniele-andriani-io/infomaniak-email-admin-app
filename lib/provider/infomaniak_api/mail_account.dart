@@ -1,11 +1,10 @@
 import 'dart:convert';
 import 'dart:core';
 
-import 'package:flutter/material.dart';
 import 'package:infomaniak_email_admin_app/constants/links.dart';
 import 'package:http/http.dart' as http;
 import 'package:infomaniak_email_admin_app/models/infomaniak/mail_account.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:infomaniak_email_admin_app/models/infomaniak/mailbox_store.dart';
 import 'package:infomaniak_email_admin_app/provider/infomaniak_api/abstract.dart';
 
 class MailAccountApi extends InfomaniakApi {
@@ -69,7 +68,7 @@ class MailAccountApi extends InfomaniakApi {
     return accounts;
   }
 
-  Future<bool> createAccount(
+  Future<MailboxStoreModel?> createAccount(
     int mailHostingId,
     String accountName,
     String accountPassword, {
@@ -91,7 +90,7 @@ class MailAccountApi extends InfomaniakApi {
       Map<String, dynamic> response = jsonDecode(apiResponse.body);
 
       if (apiResponse.statusCode == 201 && response['result'] == "success") {
-        return true;
+        return MailboxStoreModel.fromJson(response['data']);
       } else if (response.containsKey('error')) {
         String message = response['error']['description'];
         int code = apiResponse.statusCode;
@@ -102,7 +101,7 @@ class MailAccountApi extends InfomaniakApi {
     } on Exception catch (e) {
       rethrow;
     }
-    return false;
+    return null;
   }
 
   Future<bool> deleteAccount(

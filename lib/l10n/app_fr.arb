@@ -2,6 +2,7 @@
   "@@locale": "fr",
   "cancel": "Annuler",
   "not_found": "Aucun résultat",
+  "non_found": "0 éléments trouvé",
   "start_APIinfo": "Veuillez introduire votre clé API pour démarrer",
   "start_APIconfig": "Pour ainsi faire vous devez vous rendre dans la configuration de l'application en haut à droite",
   "mail_products": "Produits mail",
@@ -43,7 +44,16 @@
       }
     }
   },
-  "api_new_account_added": "Nouveau compte créé",
+  "api_new_account_added": "Nouveau compte créé. Utilisation: {usage}",
+  "@api_new_account_added": {
+    "description": "Mail account usage",
+    "placeholders": {
+      "usage": {
+        "type": "String",
+        "example": "1/25"
+      }
+    }
+  },
   "api_account_removed": "Compte {accountName} supprimé",
   "@api_account_removed": {
     "description": "Name of the account deleted",

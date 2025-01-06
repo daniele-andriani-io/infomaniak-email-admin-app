@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:infomaniak_email_admin_app/models/infomaniak/mail_account.dart';
 import 'package:infomaniak_email_admin_app/models/infomaniak/mail_product.dart';
+import 'package:infomaniak_email_admin_app/models/infomaniak/mailbox_store.dart';
 import 'package:infomaniak_email_admin_app/provider/infomaniak_api/mail_account.dart';
 import 'package:infomaniak_email_admin_app/provider/infomaniak_api/mail_alias.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -33,17 +34,18 @@ class _AddMailAccountScreensState extends State<AddMailAccountScreen> {
       });
 
       try {
-        bool wasCreated = await mailAccountApi.createAccount(
+        MailboxStoreModel? mailboxStoreModel =
+            await mailAccountApi.createAccount(
           widget.mailProduct.id!,
           _newAccount,
           _newPassword,
         );
 
-        if (wasCreated) {
+        if (mailboxStoreModel != null) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content:
-                  Text(AppLocalizations.of(context)!.api_new_account_added),
+              content: Text(AppLocalizations.of(context)!.api_new_account_added(
+                  "${mailboxStoreModel.used}/${mailboxStoreModel.total}")),
             ),
           );
           setState(() {

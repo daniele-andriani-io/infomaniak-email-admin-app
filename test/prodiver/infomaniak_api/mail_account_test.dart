@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:infomaniak_email_admin_app/models/infomaniak/mail_account.dart';
+import 'package:infomaniak_email_admin_app/models/infomaniak/mailbox_store.dart';
 import 'package:infomaniak_email_admin_app/provider/api_key.dart';
 import 'package:infomaniak_email_admin_app/provider/infomaniak_api/mail_account.dart';
 import 'package:mockito/annotations.dart';
@@ -103,11 +104,11 @@ void main() {
           ),
         ).thenAnswer((_) async => http.Response(await createExample(), 201));
 
-        bool wasCreated = await MailAccountApi().createAccount(
-            TEST_MAIL_HOSTING_ID, TEST_MAILBOX_NAME, TEST_PWD,
-            client: client);
+        MailboxStoreModel? mailboxStoreModel = await MailAccountApi()
+            .createAccount(TEST_MAIL_HOSTING_ID, TEST_MAILBOX_NAME, TEST_PWD,
+                client: client);
 
-        expect(wasCreated, true);
+        expect(mailboxStoreModel, isNotNull);
       });
 
       test('create with 404 error', () async {
@@ -122,10 +123,10 @@ void main() {
         ).thenAnswer((_) async => http.Response('Not found', 404));
 
         try {
-          bool wasCreated = await MailAccountApi().createAccount(
-              TEST_MAIL_HOSTING_ID, TEST_MAILBOX_NAME, TEST_PWD,
-              client: client);
-          expect(wasCreated, false);
+          MailboxStoreModel? mailboxStoreModel = await MailAccountApi()
+              .createAccount(TEST_MAIL_HOSTING_ID, TEST_MAILBOX_NAME, TEST_PWD,
+                  client: client);
+          expect(mailboxStoreModel, isNull);
         } catch (e) {
           expect(e.toString(), 'Exception: Something went wrong');
         }
@@ -143,10 +144,10 @@ void main() {
         ).thenAnswer((_) async => http.Response(await returnError(), 401));
 
         try {
-          bool wasCreated = await MailAccountApi().createAccount(
-              TEST_MAIL_HOSTING_ID, TEST_MAILBOX_NAME, TEST_PWD,
-              client: client);
-          expect(wasCreated, false);
+          MailboxStoreModel? mailboxStoreModel = await MailAccountApi()
+              .createAccount(TEST_MAIL_HOSTING_ID, TEST_MAILBOX_NAME, TEST_PWD,
+                  client: client);
+          expect(mailboxStoreModel, isNull);
         } catch (e) {
           expect(e.toString(), 'Exception: Authorization required (401)');
         }

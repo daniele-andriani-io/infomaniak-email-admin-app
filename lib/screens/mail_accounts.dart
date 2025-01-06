@@ -20,14 +20,20 @@ class _MailAccountsScreensState extends State<MailAccountsScreen> {
   final _formKey = GlobalKey<FormState>();
   String _searchQuery = '';
   MailAccountApi mailAccountApi = MailAccountApi();
-  List<MailAccountModel> mailAccounts = [];
-  bool _isLoading = false;
+  List<MailAccountModel>? mailAccounts;
+  bool _isLoading = true;
   bool _isFiltered = false;
 
   @override
   void initState() {
-    _searchEmail(false, context);
+    _loadEmail();
     super.initState();
+  }
+
+  void _loadEmail() async {
+    mailAccounts = await mailAccountApi.fetchAccountList(widget.account.id!);
+    _isLoading = false;
+    setState(() {});
   }
 
   void _searchEmail(bool isFiltered, BuildContext context) async {
@@ -75,7 +81,7 @@ class _MailAccountsScreensState extends State<MailAccountsScreen> {
               .settings_delete_API_key_modal_title),
           content: Text(
             AppLocalizations.of(context)!.account_delete_account_title_msg(
-                "${mailAccounts[index].mailboxName!}@${widget.account.customerName!}"),
+                "${mailAccounts![index].mailboxName!}@${widget.account.customerName!}"),
             style: Theme.of(ctx).textTheme.bodyLarge!.copyWith(
                   color: Colors.black,
                 ),
@@ -91,13 +97,13 @@ class _MailAccountsScreensState extends State<MailAccountsScreen> {
               onPressed: () async {
                 try {
                   bool wasDeleted = await mailAccountApi.deleteAccount(
-                      widget.account.id!, mailAccounts[index].mailboxName!);
+                      widget.account.id!, mailAccounts![index].mailboxName!);
                   if (wasDeleted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(AppLocalizations.of(context)!
                             .api_account_removed(
-                                mailAccounts[index].mailboxName!)),
+                                mailAccounts![index].mailboxName!)),
                       ),
                     );
                     _searchEmail(true, context);
@@ -123,8 +129,9 @@ class _MailAccountsScreensState extends State<MailAccountsScreen> {
   }
 
   Widget getBody() {
-    if (mailAccounts.isNotEmpty || _searchQuery.length > 0) {
-      if (mailAccounts.isEmpty) {
+    if (mailAccounts != null && mailAccounts!.isNotEmpty ||
+        _searchQuery.length > 0) {
+      if (mailAccounts!.isEmpty) {
         return ListView(
           children: [
             ListTile(
@@ -216,7 +223,7 @@ class _MailAccountsScreensState extends State<MailAccountsScreen> {
               ListView.builder(
                 physics: const ScrollPhysics(),
                 shrinkWrap: true,
-                itemCount: mailAccounts.length,
+                itemCount: mailAccounts!.length,
                 itemBuilder: (context, index) => ListTile(
                   leading: const Icon(Icons.email),
                   onTap: () {
@@ -224,12 +231,12 @@ class _MailAccountsScreensState extends State<MailAccountsScreen> {
                       MaterialPageRoute(
                         builder: (ctx) => MailAliasesScreen(
                           mailHostingId: widget.account.id!,
-                          mailAccount: mailAccounts[index],
+                          mailAccount: mailAccounts![index],
                         ),
                       ),
                     );
                   },
-                  title: Text(mailAccounts[index].mailbox!),
+                  title: Text(mailAccounts![index].mailbox!),
                   trailing: IconButton(
                       onPressed: () async {
                         await _removeAccount(context, index);

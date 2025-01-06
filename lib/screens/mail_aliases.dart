@@ -20,8 +20,8 @@ class _MailAliasesScreensState extends State<MailAliasesScreen> {
   final _formKey = GlobalKey<FormState>();
   String _searchQuery = '';
   MailAliasApi mailAliasApi = MailAliasApi();
-  List<String> mailAliases = [];
-  bool _isLoading = false;
+  List<String>? mailAliases;
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -32,6 +32,7 @@ class _MailAliasesScreensState extends State<MailAliasesScreen> {
   void _initMailAccounts() async {
     mailAliases = await mailAliasApi.fetchAliasesList(
         widget.mailHostingId, widget.mailAccount.mailboxName!);
+    _isLoading = false;
     setState(() {});
   }
 
@@ -44,7 +45,7 @@ class _MailAliasesScreensState extends State<MailAliasesScreen> {
     mailAliases = await mailAliasApi.fetchAliasesList(
         widget.mailHostingId, widget.mailAccount.mailboxName!);
 
-    mailAliases = mailAliases.where((item) {
+    mailAliases = mailAliases!.where((item) {
       return item.contains(_searchQuery);
     }).toList();
 
@@ -57,7 +58,7 @@ class _MailAliasesScreensState extends State<MailAliasesScreen> {
     String domain = widget.mailAccount.mailboxIdn!
         .substring(widget.mailAccount.mailboxIdn!.indexOf('@'));
 
-    if (mailAliases.isNotEmpty) {
+    if (mailAliases != null && mailAliases!.isNotEmpty) {
       return RefreshIndicator(
         child: ListView(
           children: [
@@ -94,18 +95,18 @@ class _MailAliasesScreensState extends State<MailAliasesScreen> {
             ListView.builder(
               physics: const ScrollPhysics(),
               shrinkWrap: true,
-              itemCount: mailAliases.length,
+              itemCount: mailAliases!.length,
               itemBuilder: (context, index) => ListTile(
                 leading: const Icon(Icons.email),
-                title: mailAliases[index] ==
+                title: mailAliases![index] ==
                         AppLocalizations.of(context)!.api_deleting_alias
-                    ? Text(mailAliases[index])
-                    : Text(mailAliases[index] + domain),
+                    ? Text(mailAliases![index])
+                    : Text(mailAliases![index] + domain),
                 trailing: IconButton(
                   onPressed: () async {
-                    String alias = mailAliases[index];
+                    String alias = mailAliases![index];
                     setState(() {
-                      mailAliases[index] =
+                      mailAliases![index] =
                           AppLocalizations.of(context)!.api_deleting_alias;
                     });
                     try {
@@ -123,7 +124,7 @@ class _MailAliasesScreensState extends State<MailAliasesScreen> {
                             ),
                           ),
                         );
-                        await mailAliasApi.fetchAliasesList(
+                        mailAliases = await mailAliasApi.fetchAliasesList(
                           widget.mailHostingId,
                           widget.mailAccount.mailboxName!,
                         );
@@ -139,7 +140,7 @@ class _MailAliasesScreensState extends State<MailAliasesScreen> {
                       );
                     }
                   },
-                  icon: mailAliases[index] ==
+                  icon: mailAliases![index] ==
                           AppLocalizations.of(context)!.api_deleting_alias
                       ? const SizedBox(
                           height: 16,
@@ -155,14 +156,16 @@ class _MailAliasesScreensState extends State<MailAliasesScreen> {
           ],
         ),
         onRefresh: () async {
-          await mailAliasApi.fetchAliasesList(
+          mailAliases = await mailAliasApi.fetchAliasesList(
             widget.mailHostingId,
             widget.mailAccount.mailboxName!,
           );
           setState(() {});
         },
       );
-    } else if (mailAliases.isEmpty && _searchQuery.length > 0) {
+    } else if (mailAliases != null &&
+        mailAliases!.isEmpty &&
+        _searchQuery.length > 0) {
       return ListView(
         children: [
           ListTile(
@@ -202,12 +205,14 @@ class _MailAliasesScreensState extends State<MailAliasesScreen> {
       );
     }
 
-    return const Center(
+    return Center(
       child: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(),
+          _isLoading
+              ? CircularProgressIndicator()
+              : Text(AppLocalizations.of(context)!.non_found),
         ],
       ),
     );
@@ -229,7 +234,7 @@ class _MailAliasesScreensState extends State<MailAliasesScreen> {
                         mailHostingId: widget.mailHostingId,
                         mailbox: widget.mailAccount,
                       )));
-              await mailAliasApi.fetchAliasesList(
+              mailAliases = await mailAliasApi.fetchAliasesList(
                 widget.mailHostingId,
                 widget.mailAccount.mailboxName!,
               );

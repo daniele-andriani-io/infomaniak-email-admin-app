@@ -2,6 +2,7 @@
   "@@locale": "en",
   "cancel": "Cancel",
   "not_found": "Not found",
+  "non_found": "0 elements found",
   "start_APIinfo": "Please setup an API key to start",
   "start_APIconfig": "To do so, please go to the settings menu in the top right",
   "mail_products": "Mail products",
@@ -43,7 +44,16 @@
       }
     }
   },
-  "api_new_account_added": "New account added",
+  "api_new_account_added": "New account added. Used: {usage}",
+  "@api_new_account_added": {
+    "description": "Mail account usage",
+    "placeholders": {
+      "usage": {
+        "type": "String",
+        "example": "1/25"
+      }
+    }
+  },
   "api_account_removed": "Account {accountName} deleted",
   "@api_account_removed": {
     "description": "Name of the account deleted",
