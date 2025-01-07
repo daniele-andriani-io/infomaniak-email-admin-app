@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:infomaniak_email_admin_app/helpers/notification_helper.dart';
+import 'package:infomaniak_email_admin_app/helpers/string_helper.dart';
 import 'package:infomaniak_email_admin_app/models/infomaniak/mail_account.dart';
 import 'package:infomaniak_email_admin_app/provider/infomaniak_api/mail_alias.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:infomaniak_email_admin_app/widget/circular_progress_icon_widget.dart';
+import 'package:infomaniak_email_admin_app/widget/page_widget.dart';
 import 'package:word_generator/word_generator.dart';
 
 class AddMailAliasesScreen extends StatefulWidget {
@@ -33,19 +37,15 @@ class _AddMailAliasesScreensState extends State<AddMailAliasesScreen> {
             widget.mailHostingId, widget.mailbox.mailboxName!, _newAlias);
         if (aliasCreated) {
           setState(() {
-            _isLoading = false;
             Navigator.of(context).pop();
           });
         }
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              e.toString(),
-            ),
-          ),
-        );
+        NotificationHelper.displayMessage(context, e.toString());
       }
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -58,13 +58,11 @@ class _AddMailAliasesScreensState extends State<AddMailAliasesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    String domain = widget.mailbox.mailboxIdn!
-        .substring(widget.mailbox.mailboxIdn!.indexOf('@'));
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.alias_create_new),
-      ),
-      body: Padding(
+    String domain = StringHelper.getDomain(widget.mailbox.mailboxIdn!);
+
+    return PageWidget(
+      title: AppLocalizations.of(context)!.alias_create_new,
+      getBody: Padding(
         padding: const EdgeInsets.all(8),
         child: Column(
           children: [
@@ -109,13 +107,7 @@ class _AddMailAliasesScreensState extends State<AddMailAliasesScreen> {
                 ),
                 ElevatedButton.icon(
                   icon: _isLoading
-                      ? const SizedBox(
-                          height: 16,
-                          width: 16,
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        )
+                      ? const CircularProgressIcon()
                       : const Icon(Icons.add),
                   onPressed: _saveAlias,
                   label: Text(AppLocalizations.of(context)!.alias_save),

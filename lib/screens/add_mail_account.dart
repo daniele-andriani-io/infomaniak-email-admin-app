@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:infomaniak_email_admin_app/models/infomaniak/mail_account.dart';
+import 'package:infomaniak_email_admin_app/helpers/notification_helper.dart';
 import 'package:infomaniak_email_admin_app/models/infomaniak/mail_product.dart';
 import 'package:infomaniak_email_admin_app/models/infomaniak/mailbox_store.dart';
 import 'package:infomaniak_email_admin_app/provider/infomaniak_api/mail_account.dart';
-import 'package:infomaniak_email_admin_app/provider/infomaniak_api/mail_alias.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:infomaniak_email_admin_app/widget/circular_progress_icon_widget.dart';
+import 'package:infomaniak_email_admin_app/widget/page_widget.dart';
 import 'package:word_generator/word_generator.dart';
 
 class AddMailAccountScreen extends StatefulWidget {
@@ -42,31 +43,27 @@ class _AddMailAccountScreensState extends State<AddMailAccountScreen> {
         );
 
         if (mailboxStoreModel != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(AppLocalizations.of(context)!.api_new_account_added(
-                  "${mailboxStoreModel.used}/${mailboxStoreModel.total}")),
-            ),
-          );
+          NotificationHelper.displayMessage(
+              context,
+              AppLocalizations.of(context)!.api_new_account_added(
+                  "${mailboxStoreModel.used}/${mailboxStoreModel.total}"));
           setState(() {
-            _isLoading = false;
             Navigator.of(context).pop();
           });
         }
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              e.toString(),
-            ),
-          ),
-        );
+        NotificationHelper.displayMessage(context, e.toString());
       }
+
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
   void _generatePWD() {
     String randomSentence = PasswordGenerator().generatePassword();
+    randomSentence = randomSentence.replaceAll(RegExp('[@%]'), '.');
     _formKey.currentState!.save();
     _newPassword = randomSentence;
     _showPWD = true;
@@ -94,11 +91,9 @@ class _AddMailAccountScreensState extends State<AddMailAccountScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.account_create_new),
-      ),
-      body: Padding(
+    return PageWidget(
+      title: AppLocalizations.of(context)!.account_create_new,
+      getBody: Padding(
         padding: const EdgeInsets.all(8),
         child: Column(
           children: [
@@ -181,21 +176,12 @@ class _AddMailAccountScreensState extends State<AddMailAccountScreen> {
                 ),
                 ElevatedButton.icon(
                   icon: _isLoading
-                      ? const SizedBox(
-                          height: 16,
-                          width: 16,
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        )
+                      ? const CircularProgressIcon()
                       : const Icon(Icons.add),
                   onPressed: _saveAccount,
                   label: Text(AppLocalizations.of(context)!.account_save),
                 ),
               ],
-            ),
-            const SizedBox(
-              height: 8,
             ),
             getPwdMsg()
           ],

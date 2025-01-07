@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:infomaniak_email_admin_app/constants/links.dart';
 import 'package:infomaniak_email_admin_app/models/infomaniak/account.dart';
 import 'package:http/http.dart' as http;
-import 'package:infomaniak_email_admin_app/provider/api_key.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:infomaniak_email_admin_app/provider/infomaniak_api/abstract.dart';
 

@@ -5,6 +5,9 @@ import 'package:infomaniak_email_admin_app/provider/infomaniak_api/mail_product.
 import 'package:infomaniak_email_admin_app/screens/mail_accounts.dart';
 import 'package:infomaniak_email_admin_app/screens/settings.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:infomaniak_email_admin_app/widget/loading_widget.dart';
+import 'package:infomaniak_email_admin_app/widget/page_widget.dart';
+import 'package:infomaniak_email_admin_app/helpers/notification_helper.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,12 +21,11 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   String? _apiKey;
   MailProductApi mailProductApi = MailProductApi();
-  List<MailProductModel> mailProducts = [];
+  List<MailProductModel>? mailProducts;
 
   @override
   void initState() {
-    _apiKey = apiKeyProvider.getKey();
-    if (_apiKey != null) {
+    if (apiKeyProvider.getKey() != null) {
       _initMailAccounts();
     }
     super.initState();
@@ -34,34 +36,40 @@ class _HomeScreenState extends State<HomeScreen> {
       mailProducts = await mailProductApi.fetchProductList();
       setState(() {});
     } on bool catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(AppLocalizations.of(context)!.api_call_failed!)));
+      NotificationHelper.displayMessage(
+        context,
+        AppLocalizations.of(context)!.api_call_failed!,
+      );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(
+      NotificationHelper.displayMessage(
+        context,
         e.toString(),
-      )));
+      );
     }
   }
 
   Widget getBody() {
-    if (mailProducts.isNotEmpty) {
+    if (mailProducts != null && mailProducts!.isNotEmpty) {
       return RefreshIndicator(
           child: ListView(
             children: [
               ListView.builder(
                 physics: const ScrollPhysics(),
                 shrinkWrap: true,
-                itemCount: mailProducts.length,
+                itemCount: mailProducts!.length,
                 itemBuilder: (context, index) => ListTile(
                   leading: const Icon(Icons.email),
                   onTap: () async {
-                    await Navigator.of(context).push(MaterialPageRoute(
-                        builder: (ctx) =>
-                            MailAccountsScreen(account: mailProducts[index])));
+                    await Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (ctx) => MailAccountsScreen(
+                          account: mailProducts![index],
+                        ),
+                      ),
+                    );
                     setState(() {});
                   },
-                  title: Text(mailProducts[index].customerName!),
+                  title: Text(mailProducts![index].customerName!),
                 ),
               ),
             ],
@@ -69,18 +77,8 @@ class _HomeScreenState extends State<HomeScreen> {
           onRefresh: () async {
             _initMailAccounts();
           });
-    }
-
-    if (mailProducts.isEmpty && _apiKey != null) {
-      return const Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircularProgressIndicator(),
-          ],
-        ),
-      );
+    } else if (_apiKey != null) {
+      return LoadingWidget(elements: mailProducts);
     }
     return Center(
       child: Column(
@@ -94,28 +92,25 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  IconButton getActionButton() {
+    return IconButton(
+      onPressed: () async {
+        await Navigator.of(context).push(
+          MaterialPageRoute(builder: (ctx) => const SettingsScreen()),
+        );
+        _initMailAccounts();
+        setState(() {});
+      },
+      icon: const Icon(Icons.settings),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.mail_products),
-        actions: [
-          IconButton(
-            onPressed: () async {
-              await Navigator.of(context).push(
-                MaterialPageRoute(builder: (ctx) => const SettingsScreen()),
-              );
-              _initMailAccounts();
-              setState(() {});
-            },
-            icon: const Icon(Icons.settings),
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(8),
-        child: getBody(),
-      ),
+    return PageWidget(
+      title: AppLocalizations.of(context)!.mail_products,
+      action: getActionButton(),
+      getBody: getBody(),
     );
   }
 }

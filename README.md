@@ -9,6 +9,5 @@ Infomaniak ecosystem.
 * create AdSense account
 * add widget tests?
 * add integration tests?
-* refactor
 * in-app purchase for a bigger help (Hall of fame of helpers?)
 * tablet version of the application

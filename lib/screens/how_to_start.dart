@@ -5,6 +5,7 @@ import 'package:infomaniak_email_admin_app/provider/api_key.dart';
 import 'package:infomaniak_email_admin_app/provider/infomaniak_account_id.dart';
 import 'package:infomaniak_email_admin_app/provider/infomaniak_api/profile.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:infomaniak_email_admin_app/widget/circular_progress_icon_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HowToStartScreen extends StatefulWidget {
@@ -166,11 +167,7 @@ class _HowToStartScreenState extends State<HowToStartScreen> {
                   ),
                   ElevatedButton.icon(
                     icon: _isTesting
-                        ? const SizedBox(
-                            height: 16,
-                            width: 16,
-                            child: CircularProgressIndicator(),
-                          )
+                        ? const CircularProgressIcon()
                         : const Icon(Icons.approval),
                     onPressed: _testAPIKey,
                     label: Text(
