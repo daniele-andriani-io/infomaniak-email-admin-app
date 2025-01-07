@@ -25,31 +25,33 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    if (apiKeyProvider.getKey() != null) {
-      _initMailAccounts();
-    }
+    _initMailAccounts();
     super.initState();
   }
 
   void _initMailAccounts() async {
-    try {
-      mailProducts = await mailProductApi.fetchProductList();
-      setState(() {});
-    } on bool catch (e) {
-      NotificationHelper.displayMessage(
-        context,
-        AppLocalizations.of(context)!.api_call_failed!,
-      );
-    } catch (e) {
-      NotificationHelper.displayMessage(
-        context,
-        e.toString(),
-      );
+    if (apiKeyProvider.getKey() != null) {
+      try {
+        mailProducts = await mailProductApi.fetchProductList();
+        setState(() {});
+      } on bool catch (e) {
+        NotificationHelper.displayMessage(
+          context,
+          AppLocalizations.of(context)!.api_call_failed!,
+        );
+      } catch (e) {
+        NotificationHelper.displayMessage(
+          context,
+          e.toString(),
+        );
+      }
+    } else {
+      mailProducts = null;
     }
   }
 
   Widget getBody() {
-    if (mailProducts != null && mailProducts!.isNotEmpty) {
+    if (mailProducts != null) {
       return RefreshIndicator(
           child: ListView(
             children: [
@@ -67,6 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     );
+                    _initMailAccounts();
                     setState(() {});
                   },
                   title: Text(mailProducts![index].customerName!),
@@ -80,6 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
     } else if (_apiKey != null) {
       return LoadingWidget(elements: mailProducts);
     }
+
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.max,
