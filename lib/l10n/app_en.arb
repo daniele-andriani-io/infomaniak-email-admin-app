@@ -129,5 +129,6 @@
       }
     }
   },
-  "account_delete_confirm": "Delete email account"
+  "account_delete_confirm": "Delete email account",
+  "settings_hall_of_fame": "Hall of fame"
 }

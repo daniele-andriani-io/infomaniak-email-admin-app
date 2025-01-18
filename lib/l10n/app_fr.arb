@@ -129,5 +129,6 @@
       }
     }
   },
-  "account_delete_confirm": "Supprimer le compte"
+  "account_delete_confirm": "Supprimer le compte",
+  "settings_hall_of_fame": "Mur des parrainages"
 }
