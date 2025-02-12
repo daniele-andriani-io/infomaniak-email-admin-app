@@ -96,33 +96,29 @@ class _RewardedAdWidgetState extends State<RewardedAdWidget> {
   Widget build(BuildContext context) {
     return ListTile(
       title: Text(AppLocalizations.of(context)!.rewards_help),
-      trailing: IconButton(
-        onPressed: () {
-          loadAd();
-          setState(() {
-            _rewardedAd!.show(onUserEarnedReward: (adWithoutView, rewardItem) {
-              adsWatchedProvider.incrementNumberOfAdsWatched();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(adsWatchedProvider.getThanksPhrase(context)),
-                      const SizedBox(
-                        width: 8,
-                      ),
-                      const Icon(Icons.favorite),
-                    ],
-                  ),
+      trailing: const Icon(Icons.monetization_on),
+      onTap: () {
+        loadAd();
+        setState(() {
+          _rewardedAd!.show(onUserEarnedReward: (adWithoutView, rewardItem) {
+            adsWatchedProvider.incrementNumberOfAdsWatched();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(adsWatchedProvider.getThanksPhrase(context)),
+                    const SizedBox(
+                      width: 8,
+                    ),
+                    const Icon(Icons.favorite),
+                  ],
                 ),
-              );
-            });
+              ),
+            );
           });
-        },
-        icon: const Icon(
-          Icons.monetization_on,
-        ),
-      ),
+        });
+      },
     );
   }
 }

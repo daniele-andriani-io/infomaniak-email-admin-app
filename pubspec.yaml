@@ -1,5 +1,5 @@
 name: infomaniak_email_admin_app
-description: "A new Flutter project."
+description: "Allows you to manage you e-mail addresses when you have your domain name and email account at Infomaniak."
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
@@ -23,6 +23,7 @@ dependencies:
   flutter_markdown: ^0.7.4+3
   url_launcher: ^6.3.1
   word_generator: ^0.4.4
+  flutter_launcher_icons: ^0.14.3
 
 dev_dependencies:
   flutter_test:

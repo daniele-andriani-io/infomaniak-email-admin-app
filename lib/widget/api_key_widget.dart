@@ -21,29 +21,21 @@ class _ApiKeyWidgetState extends State<ApiKeyWidget> {
     if (_apiKey == null) {
       return ListTile(
         title: Text(AppLocalizations.of(context)!.settings_add_API_key),
-        trailing: IconButton(
-          onPressed: () async {
-            await Navigator.of(context).push(
-                MaterialPageRoute(builder: (ctx) => const HowToStartScreen()));
-            setState(() {
-              _apiKey = apiKeyProvider.getKey();
-            });
-          },
-          icon: const Icon(
-            Icons.edit,
-          ),
-        ),
+        trailing: const Icon(Icons.edit),
+        onTap: () async {
+          await Navigator.of(context).push(
+              MaterialPageRoute(builder: (ctx) => const HowToStartScreen()));
+          setState(() {
+            _apiKey = apiKeyProvider.getKey();
+          });
+        },
       );
     }
 
     return ListTile(
       title: Text(AppLocalizations.of(context)!.settings_delete_API_key),
-      trailing: IconButton(
-        onPressed: () => _removeApiKeyValidation(context),
-        icon: const Icon(
-          Icons.delete,
-        ),
-      ),
+      onTap: () => _removeApiKeyValidation(context),
+      trailing: const Icon(Icons.delete),
     );
   }
 
